@@ -90,6 +90,7 @@ int cabecalho() {
 
 char **TiraSegredo(char **segredos) {
   //n vai ser o numero de segredos no arquivo
+  int n;
   FILE *arq;
   arq = fopen("segredos.txt", "r");
 
