@@ -2,18 +2,32 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#define SMAX 20
 
-int cabecalho();
+int cabecalho(); char **TiraSegredo(char **segredos);
 
 int main() {
-
-  char segredos[3][20] = {{"MELANCIA"}, {"BANANA"}, {"PERA"}};
+  int n;
+  char **segredos;
   char chute;
   char linhas[40] = "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
   int palavra, perdeu = 5, ganhou = 0;
 
+  FILE *arq;
+  arq = fopen("segredos.txt", "r");
+  if (arq == NULL) {
+    puts("ERRO 101!");
+    exit(0);
+  }
+  fscanf(arq, "%d", &n);
+  fclose(arq);
+
+  segredos = TiraSegredo(segredos);
+  printf("%s\n", segredos[1]);
+  printf("%d\n", n);
+
   srand(time(NULL));
-  palavra = rand() % 3;
+  palavra = rand() % n;
 
   linhas[2 * strlen(segredos[palavra])] = '\0';
 
@@ -72,4 +86,31 @@ int cabecalho() {
   puts("|--------JOGO------------------------|");
   puts("|-----------------DA-----------------|         versao: frutas");
   puts("|---------------------------FORCA----|");
+}
+
+char **TiraSegredo(char **segredos) {
+  //n vai ser o numero de segredos no arquivo
+  FILE *arq;
+  arq = fopen("segredos.txt", "r");
+
+  if (arq == NULL) {
+    puts("ERRO 101!");
+    exit(0);
+  }
+
+  fscanf(arq, "%d", &n);
+  segredos = (char **) calloc(n, sizeof(char *));
+  for (int i = 0; i < n; i++) {
+    segredos[i] = (char *) calloc(SMAX, sizeof(char *));
+  }
+
+  fscanf(arq, "\n%s", segredos[0]);
+  printf("%s\n", segredos[0]);
+  for (int i = 1; i < n; i++) {
+    fscanf(arq, "\n%s", segredos[i]);
+  }
+
+  fclose(arq);
+
+  return segredos;
 }
