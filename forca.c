@@ -4,8 +4,8 @@
 #include <time.h>
 #define SMAX 20
 
-char **TiraSegredo(char **segredos); int voltaN();
-void cabecalho(); void cores(int n); void forca(int situacao);
+char **LeSegredos(char **segredos); int voltaN();
+void DesenhaCabecalho(); void TrocaCor(int n); void DesenhaForca(int situacao);
 
 int main() {
   int n, posicaoAcerto[26];
@@ -24,7 +24,7 @@ int main() {
   alfabeto[26] = '\0';
 
   n = voltaN();
-  segredos = TiraSegredo(segredos);
+  segredos = LeSegredos(segredos);
 
   srand(time(NULL));
   palavra = rand() % n;
@@ -32,9 +32,9 @@ int main() {
   linhas[2 * strlen(segredos[palavra])] = '\0';
 
   do {
-    cabecalho();
+    DesenhaCabecalho();
     puts("");
-    forca(perdeu);
+    DesenhaForca(perdeu);
     puts("");
 
     for (int i = 0; i <= strlen(alfabeto); i++) {
@@ -43,20 +43,20 @@ int main() {
           printf("%c ", alfabeto[i]);
           break;
         case 1:       //acerto
-          cores(1);
+          TrocaCor(1);
           printf("%c ", alfabeto[i]);
-          cores(0);
+          TrocaCor(0);
           break;
         case 2:       //erro
-          cores(2);
+          TrocaCor(2);
           printf("%c ", alfabeto[i]);
-          cores(0);
+          TrocaCor(0);
           break;
       }
     }
 
     printf("\n\nTentativas restantes: %d", perdeu);
-    printf("\n%s\t\t\t%ld letras\n\n", linhas, strlen(segredos[palavra]));
+    printf("\n%s\t\t\t-----> %ld letras\n\n", linhas, strlen(segredos[palavra]));
     printf("Chute: ");
     scanf(" %c", &chute);
 
@@ -101,26 +101,26 @@ int main() {
   } while(!ganhou && perdeu > 0);
 
   if (ganhou == 1) {
-    cabecalho();
+    DesenhaCabecalho();
     puts("");
-    cores(1);
+    TrocaCor(1);
     printf("%s\n\n", linhas);
-    cores(0);
+    TrocaCor(0);
     printf("VOCE GANHOU, PARABENS!!\n\a");
-    forca(10);
+    DesenhaForca(10);
   } else {
-    cabecalho();
+    DesenhaCabecalho();
     puts("");
     printf("Voce perdeu ;( o segredo era: ");
     printf("%s\n\n", segredos[palavra]);
-    forca(0);
+    DesenhaForca(0);
     puts("");
   }
 
   return 0;
 }
 
-char **TiraSegredo(char **segredos) {
+char **LeSegredos(char **segredos) {
   //n vai ser o numero de segredos no arquivo
   int n;
   FILE *arq;
@@ -159,14 +159,14 @@ int voltaN() {
   return n;
 }
 
-void cabecalho() {
+void DesenhaCabecalho() {
   system("clear");
   puts("|--------JOGO------------------------|");
   puts("|-----------------DA-----------------|         versao: frutas");
   puts("|---------------------------FORCA----|");
 }
 
-void forca(int situacao) {
+void DesenhaForca(int situacao) {
   switch (situacao) {
     case 5:
       puts("||==========");
@@ -187,7 +187,7 @@ void forca(int situacao) {
     case 3:
       puts("||==========");
       puts("||      |   ");
-      puts("||      X   ");
+      puts("||      O   ");
       puts("||    --|-- ");
       puts("||          ");
       puts("||          ");
@@ -195,7 +195,7 @@ void forca(int situacao) {
     case 2:
       puts("||==========");
       puts("||      |   ");
-      puts("||      X   ");
+      puts("||      O   ");
       puts("||    --|-- ");
       puts("||      |   ");
       puts("||          ");
@@ -203,38 +203,42 @@ void forca(int situacao) {
     case 1:
       puts("||==========");
       puts("||      |   ");
-      puts("||      0   ");
+      puts("||      O   ");
       puts("||    --|-- ");
       puts("||      |   ");
       puts("||     / \\ ");
       break;
     case 0:
+      TrocaCor(2);
       puts("||==========");
       puts("||      |   ");
       puts("||      X   ");
       puts("||    --|-- ");
       puts("||      |   ");
       puts("||     / \\ ");
+      TrocaCor(0);
       break;
     case 10:
+      TrocaCor(1);
       puts("     |  O    ");
       puts("     ---|--- ");
       puts("        |   |");
       puts("        |    ");
       puts("       / \\  ");
+      TrocaCor(0);
   }
 }
 
-void cores(int n) {
+void TrocaCor(int n) {
   switch (n) {
     case 0:
-      printf("\033[0m");
+      printf("\033[0m"); //reseta
       break;
     case 1:
-      printf("\033[0;32m");
+      printf("\033[0;32m"); //verde
       break;
     case 2:
-      printf("\033[1;31m");
+      printf("\033[1;31m"); //vermelho
       break;
   }
 }
