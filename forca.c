@@ -58,6 +58,12 @@ int main() {
     printf("Chute: ");
     scanf(" %c", &chute);
 
+    if (chute >= 97 && chute <= 122) {
+      int diff;
+      diff = chute - 97;
+      chute = 65 + diff;
+    }
+
     posicaoAcerto[chute - 65] = 2; //erro
 
     for (int i = 0; i < strlen(segredos[palavra]); i++) {
