@@ -4,27 +4,27 @@
 #include <time.h>
 #define SMAX 20
 
-int cabecalho(); char **TiraSegredo(char **segredos);
+char **TiraSegredo(char **segredos); int voltaN();
+void cabecalho(); void cores(int n);
 
 int main() {
-  int n;
+  int n, posicaoAcerto[26];
+  char alfabeto[26];
   char **segredos;
   char chute;
   char linhas[40] = "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
   int palavra, perdeu = 5, ganhou = 0;
 
-  FILE *arq;
-  arq = fopen("segredos.txt", "r");
-  if (arq == NULL) {
-    puts("ERRO 101!");
-    exit(0);
+  for (int i = 0; i < 26; i++) {
+    posicaoAcerto[i] = 0;
   }
-  fscanf(arq, "%d", &n);
-  fclose(arq);
+  for (int i = 65; i < 91; i++) {
+    alfabeto[i - 65] = i;
+  }
+  alfabeto[26] = '\0';
 
+  n = voltaN();
   segredos = TiraSegredo(segredos);
-  printf("%s\n", segredos[1]);
-  printf("%d\n", n);
 
   srand(time(NULL));
   palavra = rand() % n;
@@ -34,24 +34,50 @@ int main() {
   do {
     cabecalho();
     puts("");
-    printf("Tentativas restantes: %d", perdeu);
-    printf("\n%s\n\n", linhas);
+
+    for (int i = 0; i <= strlen(alfabeto); i++) {
+      switch (posicaoAcerto[i]) {
+        case 0:
+          printf("%c ", alfabeto[i]);
+          break;
+        case 1:       //acerto
+          cores(1);
+          printf("%c ", alfabeto[i]);
+          cores(0);
+          break;
+        case 2:       //erro
+          cores(2);
+          printf("%c ", alfabeto[i]);
+          cores(0);
+          break;
+      }
+    }
+
+    printf("\n\nTentativas restantes: %d", perdeu);
+    printf("\n%s\t\t\t%ld letras\n\n", linhas, strlen(segredos[palavra]));
     printf("Chute: ");
     scanf(" %c", &chute);
+
+    posicaoAcerto[chute - 65] = 2; //erro
 
     for (int i = 0; i < strlen(segredos[palavra]); i++) {
       if (chute == segredos[palavra][i]) {
         if (i == 0) {
           linhas[0] = segredos[palavra][0];
-          perdeu++;
+          posicaoAcerto[chute - 65] = 1;
         } else {
           linhas[i * 2] = segredos[palavra][i];
-          perdeu++;
+          posicaoAcerto[chute - 65] = 1;
         }
       }
     }
 
-    perdeu--;
+    perdeu = 5;
+    for (int i = 0; i < 26; i++) {
+      if (posicaoAcerto[i] == 2) {
+        perdeu--;
+      }
+    }
 
     if (perdeu > 5) {
       perdeu = 5;
@@ -69,8 +95,10 @@ int main() {
   if (ganhou == 1) {
     cabecalho();
     puts("");
-    printf("\n%s\n\n", linhas);
-    printf("VOCE GANHOU, PARABENS!!\n");
+    cores(1);
+    printf("%s\n\n", linhas);
+    cores(0);
+    printf("VOCE GANHOU, PARABENS!!\n\a");
   } else {
     cabecalho();
     puts("");
@@ -79,13 +107,6 @@ int main() {
   }
 
   return 0;
-}
-
-int cabecalho() {
-  system("clear");
-  puts("|--------JOGO------------------------|");
-  puts("|-----------------DA-----------------|         versao: frutas");
-  puts("|---------------------------FORCA----|");
 }
 
 char **TiraSegredo(char **segredos) {
@@ -106,12 +127,44 @@ char **TiraSegredo(char **segredos) {
   }
 
   fscanf(arq, "\n%s", segredos[0]);
-  printf("%s\n", segredos[0]);
   for (int i = 1; i < n; i++) {
     fscanf(arq, "\n%s", segredos[i]);
   }
-
   fclose(arq);
 
   return segredos;
+}
+
+int voltaN() {
+  int n;
+  FILE *arq;
+  arq = fopen("segredos.txt", "r");
+  if (arq == NULL) {
+    puts("ERRO 101!");
+    exit(0);
+  }
+  fscanf(arq, "%d", &n);
+  fclose(arq);
+  return n;
+}
+
+void cabecalho() {
+  system("clear");
+  puts("|--------JOGO------------------------|");
+  puts("|-----------------DA-----------------|         versao: frutas");
+  puts("|---------------------------FORCA----|");
+}
+
+void cores(int n) {
+  switch (n) {
+    case 0:
+      printf("\033[0m");
+      break;
+    case 1:
+      printf("\033[0;32m");
+      break;
+    case 2:
+      printf("\033[1;31m");
+      break;
+  }
 }
