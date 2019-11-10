@@ -5,7 +5,7 @@
 #define SMAX 20
 
 char **TiraSegredo(char **segredos); int voltaN();
-void cabecalho(); void cores(int n);
+void cabecalho(); void cores(int n); void forca(int situacao);
 
 int main() {
   int n, posicaoAcerto[26];
@@ -33,6 +33,8 @@ int main() {
 
   do {
     cabecalho();
+    puts("");
+    forca(perdeu);
     puts("");
 
     for (int i = 0; i <= strlen(alfabeto); i++) {
@@ -105,11 +107,14 @@ int main() {
     printf("%s\n\n", linhas);
     cores(0);
     printf("VOCE GANHOU, PARABENS!!\n\a");
+    forca(10);
   } else {
     cabecalho();
     puts("");
     printf("Voce perdeu ;( o segredo era: ");
     printf("%s\n\n", segredos[palavra]);
+    forca(0);
+    puts("");
   }
 
   return 0;
@@ -159,6 +164,65 @@ void cabecalho() {
   puts("|--------JOGO------------------------|");
   puts("|-----------------DA-----------------|         versao: frutas");
   puts("|---------------------------FORCA----|");
+}
+
+void forca(int situacao) {
+  switch (situacao) {
+    case 5:
+      puts("||==========");
+      puts("||      |   ");
+      puts("||          ");
+      puts("||          ");
+      puts("||          ");
+      puts("||          ");
+      break;
+    case 4:
+      puts("||==========");
+      puts("||      |   ");
+      puts("||      O   ");
+      puts("||          ");
+      puts("||          ");
+      puts("||          ");
+      break;
+    case 3:
+      puts("||==========");
+      puts("||      |   ");
+      puts("||      X   ");
+      puts("||    --|-- ");
+      puts("||          ");
+      puts("||          ");
+      break;
+    case 2:
+      puts("||==========");
+      puts("||      |   ");
+      puts("||      X   ");
+      puts("||    --|-- ");
+      puts("||      |   ");
+      puts("||          ");
+      break;
+    case 1:
+      puts("||==========");
+      puts("||      |   ");
+      puts("||      0   ");
+      puts("||    --|-- ");
+      puts("||      |   ");
+      puts("||     / \\ ");
+      break;
+    case 0:
+      puts("||==========");
+      puts("||      |   ");
+      puts("||      X   ");
+      puts("||    --|-- ");
+      puts("||      |   ");
+      puts("||     / \\ ");
+      break;
+    case 10:
+      puts("     |  O    ");
+      puts("     ---|--- ");
+      puts("        |   |");
+      puts("        |    ");
+      puts("       / \\  ");
+  }
 }
 
 void cores(int n) {
