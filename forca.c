@@ -4,11 +4,11 @@
 #include <time.h>
 #define SMAX 20
 
-char **LeSegredos(char **segredos); int voltaN();
+char **LeSegredos(char **segredos, int qualArquivo); int voltaN(int qualArquivo);
 void DesenhaCabecalho(); void TrocaCor(int n); void DesenhaForca(int situacao);
 
 int main() {
-  int n, posicaoAcerto[26];
+  int n, escolha, posicaoAcerto[26];
   char alfabeto[26];
   char **segredos;
   char chute;
@@ -23,8 +23,14 @@ int main() {
   }
   alfabeto[26] = '\0';
 
-  n = voltaN();
-  segredos = LeSegredos(segredos);
+  do {
+    puts("Qual o modo de jogo?");
+    printf("(1)FRUTAS ou (2)CARROS: ");
+    scanf("%d", &escolha);
+  } while(escolha != 1 && escolha != 2);
+
+  n = voltaN(escolha);
+  segredos = LeSegredos(segredos, escolha);
 
   srand(time(NULL));
   palavra = rand() % n;
@@ -120,49 +126,79 @@ int main() {
   return 0;
 }
 
-char **LeSegredos(char **segredos) {
+char **LeSegredos(char **segredos, int qualArquivo) {
   //n vai ser o numero de segredos no arquivo
   int n;
-  FILE *arq;
-  arq = fopen("segredos.txt", "r");
+  FILE *arq1, *arq2;
+  arq1 = fopen("frutas.txt", "r");
+  arq2 = fopen("carros.txt", "r");
 
-  if (arq == NULL) {
+  if (arq1 == NULL || arq2 == NULL) {
     puts("ERRO 101!");
     exit(0);
   }
 
-  fscanf(arq, "%d", &n);
-  segredos = (char **) calloc(n, sizeof(char *));
-  for (int i = 0; i < n; i++) {
-    segredos[i] = (char *) calloc(SMAX, sizeof(char *));
-  }
+  switch (qualArquivo) {
+    case 1:
+      fscanf(arq1, "%d", &n);
+      segredos = (char **) calloc(n, sizeof(char *));
+      for (int i = 0; i < n; i++) {
+        segredos[i] = (char *) calloc(SMAX, sizeof(char *));
+      }
 
-  fscanf(arq, "\n%s", segredos[0]);
-  for (int i = 1; i < n; i++) {
-    fscanf(arq, "\n%s", segredos[i]);
+      fscanf(arq1, "\n%s", segredos[0]);
+      for (int i = 1; i < n; i++) {
+        fscanf(arq1, "\n%s", segredos[i]);
+      }
+      break;
+    case 2:
+      fscanf(arq2, "%d", &n);
+      segredos = (char **) calloc(n, sizeof(char *));
+      for (int i = 0; i < n; i++) {
+        segredos[i] = (char *) calloc(SMAX, sizeof(char *));
+      }
+
+      fscanf(arq2, "\n%s", segredos[0]);
+      for (int i = 1; i < n; i++) {
+        fscanf(arq2, "\n%s", segredos[i]);
+      }
+      break;
   }
-  fclose(arq);
+  fclose(arq1);
+  fclose(arq2);
 
   return segredos;
 }
 
-int voltaN() {
+int voltaN(int qualArquivo) {
   int n;
-  FILE *arq;
-  arq = fopen("segredos.txt", "r");
-  if (arq == NULL) {
+  FILE *arq1, *arq2;
+  arq1 = fopen("frutas.txt", "r");
+  arq2 = fopen("carros.txt", "r");
+
+  if (arq1 == NULL || arq2 == NULL) {
     puts("ERRO 101!");
     exit(0);
   }
-  fscanf(arq, "%d", &n);
-  fclose(arq);
+
+  switch (qualArquivo) {
+    case 1:
+      fscanf(arq1, "%d", &n);
+      break;
+    case 2:
+      fscanf(arq2, "%d", &n);
+      break;
+  }
+
+  fclose(arq1);
+  fclose(arq2);
   return n;
 }
 
 void DesenhaCabecalho() {
   system("clear");
   puts("|--------JOGO------------------------|");
-  puts("|-----------------DA-----------------|         versao: frutas");
+  puts("|-----------------DA-----------------|");
   puts("|---------------------------FORCA----|");
 }
 
