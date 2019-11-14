@@ -86,16 +86,17 @@ int main() {
       }
     }
 
-    perdeu = 5;
+    if (escolha == 2) {
+      perdeu = 7;
+    } else {
+      perdeu = 5;
+    }
     for (int i = 0; i < 26; i++) {
       if (posicaoAcerto[i] == 2) {
         perdeu--;
       }
     }
 
-    if (perdeu > 5) {
-      perdeu = 5;
-    }
     ganhou = 1;
 
     for (int i = 0; i < strlen(linhas); i++) {
@@ -113,7 +114,11 @@ int main() {
     printf("%s\n\n", linhas);
     TrocaCor(0);
     printf("VOCE GANHOU, PARABENS!!\n\a");
-    DesenhaForca(10);
+    for (int i = 0; i < 10; i++) {
+      DesenhaForca(10);
+      system("clear");
+      DesenhaForca(11);
+    }
   } else {
     DesenhaCabecalho();
     puts("");
@@ -262,6 +267,24 @@ void DesenhaForca(int situacao) {
       puts("        |    ");
       puts("       / \\  ");
       TrocaCor(0);
+      break;
+    case 11:
+      TrocaCor(1);
+      puts("        O  | ");
+      puts("     ---|--- ");
+      puts("     |  |    ");
+      puts("        |    ");
+      puts("       / \\  ");
+      TrocaCor(0);
+      break;
+    default:
+      puts("||==========");
+      puts("||      |   ");
+      puts("||          ");
+      puts("||          ");
+      puts("||          ");
+      puts("||          ");
+      break;
   }
 }
 
