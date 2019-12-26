@@ -9,6 +9,7 @@ void DesenhaCabecalho(); void TrocaCor(int n); void DesenhaForca(int situacao);
 
 int main() {
   int n, escolha, posicaoAcerto[26];
+  int diff;
   char alfabeto[26];
   char **segredos;
   char chute;
@@ -67,7 +68,6 @@ int main() {
     scanf(" %c", &chute);
 
     if (chute >= 97 && chute <= 122) {
-      int diff;
       diff = chute - 97;
       chute = 65 + diff;
     }
@@ -114,11 +114,7 @@ int main() {
     printf("%s\n\n", linhas);
     TrocaCor(0);
     printf("VOCE GANHOU, PARABENS!!\n\a");
-    for (int i = 0; i < 10; i++) {
-      DesenhaForca(10);
-      system("clear");
-      DesenhaForca(11);
-    }
+    DesenhaForca(10);
   } else {
     DesenhaCabecalho();
     puts("");
@@ -128,6 +124,7 @@ int main() {
     puts("");
   }
 
+  free(segredos);
   return 0;
 }
 
@@ -291,7 +288,7 @@ void DesenhaForca(int situacao) {
 void TrocaCor(int n) {
   switch (n) {
     case 0:
-      printf("\033[0m"); //reseta
+      printf("\033[0m");    //reseta
       break;
     case 1:
       printf("\033[0;32m"); //verde
