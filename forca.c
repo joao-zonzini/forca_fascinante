@@ -4,44 +4,53 @@
 #include <time.h>
 #define SMAX 20
 
+//prototipo de funcoes
 char **LeSegredos(char **segredos, int qualArquivo); int voltaN(int qualArquivo);
 void DesenhaCabecalho(); void TrocaCor(int n); void DesenhaForca(int situacao);
 
 int main() {
+  //declaracao de variaveis
   int n, escolha, posicaoAcerto[26];
   int diff;
   char alfabeto[26];
   char **segredos;
   char chute;
   char linhas[40] = "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
-  int palavra, perdeu = 5, ganhou = 0;
+  int palavra, tentativas = 5, ganhou = 0;
 
+  //enche o array de flags com zeros
   for (int i = 0; i < 26; i++) {
     posicaoAcerto[i] = 0;
   }
+
+  //preenche o alfabeto usando ASCII
   for (int i = 65; i < 91; i++) {
     alfabeto[i - 65] = i;
   }
   alfabeto[26] = '\0';
 
+  //escolha do modo de jogo, condicao evita um modo que nao existe
   do {
     puts("Qual o modo de jogo?");
     printf("(1)FRUTAS ou (2)CARROS: ");
     scanf("%d", &escolha);
   } while(escolha != 1 && escolha != 2);
 
+  //quero saber o numero de segredos, jogo a escolha pra decidir qual arquivo abrir
   n = voltaN(escolha);
-  segredos = LeSegredos(segredos, escolha);
+  segredos = LeSegredos(segredos, escolha); //segredos ta alocado dinamicamente para o numero de palavras
 
+  //escolhe um segredo aleatoriamente
   srand(time(NULL));
   palavra = rand() % n;
 
+  //define o fim da string que faz os _ _ _ _ _
   linhas[2 * strlen(segredos[palavra])] = '\0';
 
   do {
     DesenhaCabecalho();
     puts("");
-    DesenhaForca(perdeu);
+    DesenhaForca(tentativas);
     puts("");
 
     for (int i = 0; i <= strlen(alfabeto); i++) {
@@ -62,7 +71,7 @@ int main() {
       }
     }
 
-    printf("\n\nTentativas restantes: %d", perdeu);
+    printf("\n\nTentativas restantes: %d", tentativas);
     printf("\n%s\t\t\t-----> %ld letras\n\n", linhas, strlen(segredos[palavra]));
     printf("Chute: ");
     scanf(" %c", &chute);
@@ -87,13 +96,14 @@ int main() {
     }
 
     if (escolha == 2) {
-      perdeu = 7;
+      tentativas = 7;
     } else {
-      perdeu = 5;
+      tentativas = 5;
     }
+
     for (int i = 0; i < 26; i++) {
       if (posicaoAcerto[i] == 2) {
-        perdeu--;
+        tentativas--;
       }
     }
 
@@ -105,7 +115,7 @@ int main() {
       }
     }
 
-  } while(!ganhou && perdeu > 0);
+  } while(!ganhou && tentativas > 0);
 
   if (ganhou == 1) {
     DesenhaCabecalho();
@@ -118,12 +128,15 @@ int main() {
   } else {
     DesenhaCabecalho();
     puts("");
-    printf("Voce perdeu ;( o segredo era: ");
+    printf("Voce tentativas ;( o segredo era: ");
     printf("%s\n\n", segredos[palavra]);
     DesenhaForca(0);
     puts("");
   }
 
+  for (int i = 0; i < n; i++) {
+    free(segredos[i]);
+  }
   free(segredos);
   return 0;
 }
