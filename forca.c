@@ -47,12 +47,17 @@ int main() {
   //define o fim da string que faz os _ _ _ _ _
   linhas[2 * strlen(segredos[palavra])] = '\0';
 
+  if (escolha == 2) {
+    tentativas = 7;
+  }
+
   do {
     DesenhaCabecalho();
     puts("");
     DesenhaForca(tentativas);
     puts("");
 
+    //varre o alfabeto e sua array de flags para verificar os acertos e erros
     for (int i = 0; i <= strlen(alfabeto); i++) {
       switch (posicaoAcerto[i]) {
         case 0:
@@ -71,18 +76,30 @@ int main() {
       }
     }
 
-    printf("\n\nTentativas restantes: %d", tentativas);
+    printf("\n\n");
+    puts("\t-----------------------------  ");
+    printf("\t|  Tentativas restantes: %d  |\n", tentativas);
+    puts("\t-----------------------------  ");
     printf("\n%s\t\t\t-----> %ld letras\n\n", linhas, strlen(segredos[palavra]));
     printf("Chute: ");
     scanf(" %c", &chute);
 
+    if (escolha == 2) {
+      tentativas = 7;
+    } else {
+      tentativas = 5;
+    }
+
+    //nao importa o chute esse codigo faz ele ser maiusculo
     if (chute >= 97 && chute <= 122) {
       diff = chute - 97;
       chute = 65 + diff;
     }
 
-    posicaoAcerto[chute - 65] = 2; //erro
+    //assume que o chute é um erro
+    posicaoAcerto[chute - 65] = 2;
 
+    //verifica se o chute é de fato um erro
     for (int i = 0; i < strlen(segredos[palavra]); i++) {
       if (chute == segredos[palavra][i]) {
         if (i == 0) {
@@ -95,20 +112,17 @@ int main() {
       }
     }
 
-    if (escolha == 2) {
-      tentativas = 7;
-    } else {
-      tentativas = 5;
-    }
-
+    //para cada flag marcando erro, tiro 1 de tentativas
     for (int i = 0; i < 26; i++) {
       if (posicaoAcerto[i] == 2) {
         tentativas--;
       }
     }
 
+    //assumo que todos as letras foram descobertas
     ganhou = 1;
 
+    //verifica se falta alguma letra
     for (int i = 0; i < strlen(linhas); i++) {
       if (linhas[i] == '_') {
         ganhou = 0;
@@ -128,12 +142,13 @@ int main() {
   } else {
     DesenhaCabecalho();
     puts("");
-    printf("Voce tentativas ;( o segredo era: ");
+    printf("Voce perdeu ;( o segredo era: ");
     printf("%s\n\n", segredos[palavra]);
     DesenhaForca(0);
     puts("");
   }
 
+  //evitando memory leak
   for (int i = 0; i < n; i++) {
     free(segredos[i]);
   }
@@ -142,71 +157,68 @@ int main() {
 }
 
 char **LeSegredos(char **segredos, int qualArquivo) {
-  //n vai ser o numero de segredos no arquivo
+  char nomeDoArquivo[10]; 
   int n;
-  FILE *arq1, *arq2;
-  arq1 = fopen("frutas.txt", "r");
-  arq2 = fopen("carros.txt", "r");
+  FILE *arq;
 
-  if (arq1 == NULL || arq2 == NULL) {
+  n = voltaN(qualArquivo);
+
+  if (qualArquivo == 1) {
+    strncpy(nomeDoArquivo, "frutas.txt", 10);
+  } else {
+    strncpy(nomeDoArquivo, "carros.txt", 10);
+  }
+
+  arq = fopen(nomeDoArquivo, "r");
+
+  if (arq == NULL) {
     puts("ERRO 101!");
     exit(0);
   }
 
-  switch (qualArquivo) {
-    case 1:
-      fscanf(arq1, "%d", &n);
-      segredos = (char **) calloc(n, sizeof(char *));
-      for (int i = 0; i < n; i++) {
-        segredos[i] = (char *) calloc(SMAX, sizeof(char *));
-      }
-
-      fscanf(arq1, "\n%s", segredos[0]);
-      for (int i = 1; i < n; i++) {
-        fscanf(arq1, "\n%s", segredos[i]);
-      }
-      break;
-    case 2:
-      fscanf(arq2, "%d", &n);
-      segredos = (char **) calloc(n, sizeof(char *));
-      for (int i = 0; i < n; i++) {
-        segredos[i] = (char *) calloc(SMAX, sizeof(char *));
-      }
-
-      fscanf(arq2, "\n%s", segredos[0]);
-      for (int i = 1; i < n; i++) {
-        fscanf(arq2, "\n%s", segredos[i]);
-      }
-      break;
+  segredos = (char **) calloc(n, sizeof(char *));
+  for (int i = 0; i < n; i++) {
+    segredos[i] = (char *) calloc(SMAX, sizeof(char *));
   }
-  fclose(arq1);
-  fclose(arq2);
+
+  fscanf(arq, "\n%s", segredos[0]);
+  for (int i = 1; i < n; i++) {
+    fscanf(arq, "\n%s", segredos[i]);
+  }
+
+  fclose(arq);
 
   return segredos;
 }
 
 int voltaN(int qualArquivo) {
-  int n;
-  FILE *arq1, *arq2;
-  arq1 = fopen("frutas.txt", "r");
-  arq2 = fopen("carros.txt", "r");
+  char nomeDoArquivo[10];
+  char c;
+  int n = -1;
+  FILE *arq;
 
-  if (arq1 == NULL || arq2 == NULL) {
+  if (qualArquivo == 1) {
+    strncpy(nomeDoArquivo, "frutas.txt", 10);
+  } else {
+    strncpy(nomeDoArquivo, "carros.txt", 10);
+  }
+
+  arq = fopen(nomeDoArquivo, "r");
+
+  if (arq == NULL) {
     puts("ERRO 101!");
     exit(0);
   }
 
-  switch (qualArquivo) {
-    case 1:
-      fscanf(arq1, "%d", &n);
-      break;
-    case 2:
-      fscanf(arq2, "%d", &n);
-      break;
+  while (!feof(arq)) {
+    fscanf(arq, "%c", &c);
+    if (c == '\n') {
+      n++;
+    }
   }
 
-  fclose(arq1);
-  fclose(arq2);
+  fclose(arq);
+
   return n;
 }
 
