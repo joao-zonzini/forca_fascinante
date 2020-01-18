@@ -157,7 +157,7 @@ int main() {
 }
 
 char **LeSegredos(char **segredos, int qualArquivo) {
-  char nomeDoArquivo[10]; 
+  char nomeDoArquivo[10];
   int n;
   FILE *arq;
 
@@ -176,12 +176,14 @@ char **LeSegredos(char **segredos, int qualArquivo) {
     exit(0);
   }
 
+  //aloca dinamicamente a quantidade de segredos
   segredos = (char **) calloc(n, sizeof(char *));
   for (int i = 0; i < n; i++) {
     segredos[i] = (char *) calloc(SMAX, sizeof(char *));
   }
 
-  fscanf(arq, "\n%s", segredos[0]);
+  //le no vetor os segredos
+  fscanf(arq, "%s", segredos[0]);
   for (int i = 1; i < n; i++) {
     fscanf(arq, "\n%s", segredos[i]);
   }
