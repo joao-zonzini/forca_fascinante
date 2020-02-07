@@ -4,9 +4,17 @@
 #include <time.h>
 #define SMAX 20
 
+typedef struct jogador {
+  char nome[4];
+  float pontuacao;
+  unsigned long epochInicial;
+  unsigned long epochFinal;
+} sJogadorInfo;
+
 //prototipo de funcoes
 char **LeSegredos(char **segredos, int qualArquivo); int voltaN(int qualArquivo);
 void DesenhaCabecalho(); void TrocaCor(int n); void DesenhaForca(int situacao);
+void salvaJogador(sJogadorInfo jaux);
 
 int main() {
   //declaracao de variaveis
@@ -15,8 +23,16 @@ int main() {
   char alfabeto[26];
   char **segredos;
   char chute;
-  char linhas[40] = "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
+  char linhas[] = "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
   int palavra, tentativas = 5, ganhou = 0;
+  sJogadorInfo jaux;
+
+  DesenhaCabecalho();
+
+  //pedindo nome do jogador
+  printf("INSIRA SEU NICK: ");
+  fgets(jaux.nome, 4, stdin);
+  jaux.epochInicial = time(NULL); //lu
 
   //enche o array de flags com zeros
   for (int i = 0; i < 26; i++) {
@@ -34,6 +50,7 @@ int main() {
     puts("Qual o modo de jogo?");
     printf("(1)FRUTAS ou (2)CARROS: ");
     scanf("%d", &escolha);
+    system("clear");
   } while(escolha != 1 && escolha != 2);
 
   //quero saber o numero de segredos, jogo a escolha pra decidir qual arquivo abrir
@@ -50,6 +67,8 @@ int main() {
   if (escolha == 2) {
     tentativas = 7;
   }
+
+  jaux.pontuacao = 0;
 
   do {
     DesenhaCabecalho();
@@ -81,14 +100,18 @@ int main() {
     printf("\t|  Tentativas restantes: %d  |\n", tentativas);
     puts("\t-----------------------------  ");
     printf("\n%s\t\t\t-----> %ld letras\n\n", linhas, strlen(segredos[palavra]));
+    printf("Pontuacao: %.2f\n", jaux.pontuacao);
     printf("Chute: ");
     scanf(" %c", &chute);
+
 
     if (escolha == 2) {
       tentativas = 7;
     } else {
       tentativas = 5;
     }
+
+    jaux.pontuacao = 0;
 
     //nao importa o chute esse codigo faz ele ser maiusculo
     if (chute >= 97 && chute <= 122) {
@@ -112,10 +135,13 @@ int main() {
       }
     }
 
-    //para cada flag marcando erro, tiro 1 de tentativas
+    //para cada flag marcando erro, tiro 1 de tentativas e tira  pontos
     for (int i = 0; i < 26; i++) {
       if (posicaoAcerto[i] == 2) {
         tentativas--;
+        jaux.pontuacao -= 15;
+      } else if (posicaoAcerto[i]) {
+        jaux.pontuacao += 50;
       }
     }
 
@@ -131,19 +157,22 @@ int main() {
 
   } while(!ganhou && tentativas > 0);
 
+  jaux.epochFinal = time(NULL); //lu
+
+  salvaJogador(jaux);
+
   if (ganhou == 1) {
     DesenhaCabecalho();
     puts("");
     TrocaCor(1);
     printf("%s\n\n", linhas);
     TrocaCor(0);
-    printf("VOCE GANHOU, PARABENS!!\n\a");
+    printf("VOCE GANHOU, PARABENS!! ---> SUA PONTUACAO: %.2f\n\a", jaux.pontuacao);
     DesenhaForca(10);
   } else {
     DesenhaCabecalho();
     puts("");
-    printf("Voce perdeu ;( o segredo era: ");
-    printf("%s\n\n", segredos[palavra]);
+    printf("Voce perdeu ;( sua pontuacao foi: %.2f\n\n", jaux.pontuacao);
     DesenhaForca(0);
     puts("");
   }
@@ -154,6 +183,21 @@ int main() {
   }
   free(segredos);
   return 0;
+}
+
+void salvaJogador(sJogadorInfo jaux) {
+  FILE *arq;
+
+  arq = fopen("placar.txt", "a+");
+
+  if (arq == NULL) {
+    printf("NAO FOI POSSIVEL SALVAR JOGADOR\n");
+    exit(0);
+  }
+
+  fprintf(arq, "Nick: %s | Placar: %.2f | Tempo: %lu segundos\n", jaux.nome, jaux.pontuacao, jaux.epochFinal - jaux.epochInicial);
+
+  fclose(arq);
 }
 
 char **LeSegredos(char **segredos, int qualArquivo) {
@@ -224,11 +268,26 @@ int voltaN(int qualArquivo) {
   return n;
 }
 
+void TrocaCor(int n) {
+  switch (n) {
+    case 0:
+      printf("\033[0m");    //reseta
+      break;
+    case 1:
+      printf("\033[0;32m"); //verde
+      break;
+    case 2:
+      printf("\033[1;31m"); //vermelho
+      break;
+  }
+}
+
 void DesenhaCabecalho() {
   system("clear");
-  puts("|--------JOGO------------------------|");
-  puts("|-----------------DA-----------------|");
-  puts("|---------------------------FORCA----|");
+  puts("++++++++++++++++++++++++++++++++++++++");
+  puts("+       FORCA                        +");
+  puts("+                  FASCINANTE        +");
+  puts("++++++++++++++++++++++++++++++++++++++");
 }
 
 void DesenhaForca(int situacao) {
@@ -308,20 +367,6 @@ void DesenhaForca(int situacao) {
       puts("||          ");
       puts("||          ");
       puts("||          ");
-      break;
-  }
-}
-
-void TrocaCor(int n) {
-  switch (n) {
-    case 0:
-      printf("\033[0m");    //reseta
-      break;
-    case 1:
-      printf("\033[0;32m"); //verde
-      break;
-    case 2:
-      printf("\033[1;31m"); //vermelho
       break;
   }
 }
