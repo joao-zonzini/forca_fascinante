@@ -7,7 +7,6 @@
 int main() {
   //declaracao de variaveis
   int n, escolha, posicaoAcerto[26];
-  int diff;
   char alfabeto[26];
   char **segredos;
   char chute;
@@ -25,12 +24,7 @@ int main() {
   }
   alfabeto[26] = '\0';
 
-  //escolha do modo de jogo, condicao evita um modo que nao existe
-  do {
-    puts("Qual o modo de jogo?");
-    printf("(1)FRUTAS ou (2)CARROS: ");
-    scanf("%d", &escolha);
-  } while(escolha != 1 && escolha != 2);
+  escolha = modoDeJogo();
 
   //quero saber o numero de segredos, jogo a escolha pra decidir qual arquivo abrir
   n = voltaN(escolha);
@@ -51,40 +45,16 @@ int main() {
     DesenhaForca(tentativas);
     puts("");
 
-    //varre o alfabeto e sua array de flags para verificar os acertos e erros
-    for (int i = 0; i <= strlen(alfabeto); i++) {
-      switch (posicaoAcerto[i]) {
-        case 0:
-          printf("%c ", alfabeto[i]);
-          break;
-        case 1:       //acerto
-          TrocaCor(1);
-          printf("%c ", alfabeto[i]);
-          TrocaCor(0);
-          break;
-        case 2:       //erro
-          TrocaCor(2);
-          printf("%c ", alfabeto[i]);
-          TrocaCor(0);
-          break;
-      }
-    }
+    pintarAlfabeto(alfabeto, posicaoAcerto);
 
-    printf("\n\n");
-    puts("\t-----------------------------  ");
-    printf("\t|  Tentativas restantes: %d  |\n", tentativas);
-    puts("\t-----------------------------  ");
-    printf("\n%s\t\t\t-----> %ld letras\n\n", linhas, strlen(segredos[palavra]));
+    tentativasRestantes(tentativas, linhas, strlen(segredos[palavra]));
+
     printf("Chute: ");
     scanf(" %c", &chute);
 
     tentativas = (escolha == 2) ? 7 : 5;
 
-    //nao importa o chute esse codigo faz ele ser maiusculo
-    if (chute >= 97 && chute <= 122) {
-      diff = chute - 97;
-      chute = 65 + diff;
-    }
+    maiusculador(&chute);
 
     //assume que o chute é um erro
     posicaoAcerto[chute - 65] = 2;
@@ -146,6 +116,56 @@ int main() {
   return 0;
 }
 
+void maiusculador(char *letra) {
+  int diff;
+  //nao importa o letra esse codigo faz ele ser maiusculo
+  if (*letra >= 97 && *letra <= 122) {
+    diff = *letra - 97;
+    *letra = 65 + diff;
+  }
+}
+
+void tentativasRestantes(int tentativas, char *linhas, int numeroDeLetras) {
+  printf("\n\n");
+  puts("\t-----------------------------  ");
+  printf("\t|  Tentativas restantes: %d  |\n", tentativas);
+  puts("\t-----------------------------  ");
+  printf("\n%s\t\t\t-----> %ld letras\n\n", linhas, numeroDeLetras);
+}
+
+void pintarAlfabeto(char *alfabeto, int *posicaoAcerto) {
+  //varre o alfabeto e sua array de flags para verificar os acertos e erros
+  for (int i = 0; i <= strlen(alfabeto); i++) {
+    switch (posicaoAcerto[i]) {
+      case 0:
+      printf("%c ", alfabeto[i]);
+      break;
+      case 1:       //acerto
+      TrocaCor(1);
+      printf("%c ", alfabeto[i]);
+      TrocaCor(0);
+      break;
+      case 2:       //erro
+      TrocaCor(2);
+      printf("%c ", alfabeto[i]);
+      TrocaCor(0);
+      break;
+    }
+  }
+}
+
+int modoDeJogo() {
+  //escolha do modo de jogo, condicao evita um modo que nao existe
+  int escolha;
+  do {
+    puts("Qual o modo de jogo?");
+    printf("(1)FRUTAS ou (2)CARROS: ");
+    scanf("%d", &escolha);
+  } while(escolha != 1 && escolha != 2);
+
+  return escolha;
+}
+
 char **LeSegredos(char **segredos, int qualArquivo) {
   char nomeDoArquivo[10];
   int n;
@@ -153,7 +173,7 @@ char **LeSegredos(char **segredos, int qualArquivo) {
 
   n = voltaN(qualArquivo);
 
-  if (qualArquivo) {
+  if (qualArquivo == 1) {
     strncpy(nomeDoArquivo, "frutas.txt", 10);
   } else {
     strncpy(nomeDoArquivo, "carros.txt", 10);
