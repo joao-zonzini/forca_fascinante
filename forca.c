@@ -2,11 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#define SMAX 20
-
-//prototipo de funcoes
-char **LeSegredos(char **segredos, int qualArquivo); int voltaN(int qualArquivo);
-void DesenhaCabecalho(); void TrocaCor(int n); void DesenhaForca(int situacao);
+#include "forca.h"
 
 int main() {
   //declaracao de variaveis
@@ -47,9 +43,7 @@ int main() {
   //define o fim da string que faz os _ _ _ _ _
   linhas[2 * strlen(segredos[palavra])] = '\0';
 
-  if (escolha == 2) {
-    tentativas = 7;
-  }
+  tentativas = (escolha == 2) ? 7 : 5;
 
   do {
     DesenhaCabecalho();
@@ -84,11 +78,7 @@ int main() {
     printf("Chute: ");
     scanf(" %c", &chute);
 
-    if (escolha == 2) {
-      tentativas = 7;
-    } else {
-      tentativas = 5;
-    }
+    tentativas = (escolha == 2) ? 7 : 5;
 
     //nao importa o chute esse codigo faz ele ser maiusculo
     if (chute >= 97 && chute <= 122) {
@@ -131,7 +121,7 @@ int main() {
 
   } while(!ganhou && tentativas > 0);
 
-  if (ganhou == 1) {
+  if (ganhou) {
     DesenhaCabecalho();
     puts("");
     TrocaCor(1);
@@ -163,7 +153,7 @@ char **LeSegredos(char **segredos, int qualArquivo) {
 
   n = voltaN(qualArquivo);
 
-  if (qualArquivo == 1) {
+  if (qualArquivo) {
     strncpy(nomeDoArquivo, "frutas.txt", 10);
   } else {
     strncpy(nomeDoArquivo, "carros.txt", 10);
