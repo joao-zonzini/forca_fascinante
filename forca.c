@@ -24,7 +24,7 @@ int main() {
   }
   alfabeto[26] = '\0';
 
-  escolha = modoDeJogo();
+  modoDeJogo(&escolha);
 
   //quero saber o numero de segredos, jogo a escolha pra decidir qual arquivo abrir
   n = voltaN(escolha);
@@ -154,16 +154,13 @@ void pintarAlfabeto(char *alfabeto, int *posicaoAcerto) {
   }
 }
 
-int modoDeJogo() {
+void modoDeJogo(int *escolha) {
   //escolha do modo de jogo, condicao evita um modo que nao existe
-  int escolha;
   do {
     puts("Qual o modo de jogo?");
     printf("(1)FRUTAS ou (2)CARROS: ");
-    scanf("%d", &escolha);
-  } while(escolha != 1 && escolha != 2);
-
-  return escolha;
+    scanf("%d", escolha);
+  } while(*escolha != 1 && *escolha != 2);
 }
 
 char **LeSegredos(char **segredos, int qualArquivo) {
