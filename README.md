@@ -1,10 +1,10 @@
 # forca_fascinante
-Simples mas elegante forca com segredos de frutas escrita em C
+Simples mas elegante forca com segredos originalmente de frutas e carros escrita em C
 
---> Clean code hangman game (variables and functions are named in Portuguese)
+--> Jogo da Forca escrito com código limpo
 
---> Fruit names in Portugueses are the secrets, which can easily be changed
+--> Segredos da forca em arquivos separados do código, novos segredos e novos modos de jogo podem ser adicionados facilmente
 
---> Free code written for fun
+--> Código livre escrito por diversão
 
---> Any suggestions are welcome
+--> Quaisquer sugestões são bem-vindas!
