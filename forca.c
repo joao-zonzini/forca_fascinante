@@ -98,13 +98,17 @@ int main() {
     printf("%s\n\n", linhas);
     TrocaCor(0);
     printf("VOCE GANHOU, PARABENS!!\n\a");
+    TrocaCor(1);
     DesenhaForca(10);
+    TrocaCor(0);
   } else {
     DesenhaCabecalho();
     puts("");
     printf("Voce perdeu ;( o segredo era: ");
     printf("%s\n\n", segredos[palavra]);
+    TrocaCor(2);
     DesenhaForca(0);
+    TrocaCor(0);
     puts("");
   }
 
@@ -239,84 +243,13 @@ void DesenhaCabecalho() {
 }
 
 void DesenhaForca(int situacao) {
-  switch (situacao) {
-    case 5:
-      puts("||==========");
-      puts("||      |   ");
-      puts("||          ");
-      puts("||          ");
-      puts("||          ");
-      puts("||          ");
-      break;
-    case 4:
-      puts("||==========");
-      puts("||      |   ");
-      puts("||      O   ");
-      puts("||          ");
-      puts("||          ");
-      puts("||          ");
-      break;
-    case 3:
-      puts("||==========");
-      puts("||      |   ");
-      puts("||      O   ");
-      puts("||    --|-- ");
-      puts("||          ");
-      puts("||          ");
-      break;
-    case 2:
-      puts("||==========");
-      puts("||      |   ");
-      puts("||      O   ");
-      puts("||    --|-- ");
-      puts("||      |   ");
-      puts("||          ");
-      break;
-    case 1:
-      puts("||==========");
-      puts("||      |   ");
-      puts("||      O   ");
-      puts("||    --|-- ");
-      puts("||      |   ");
-      puts("||     / \\ ");
-      break;
-    case 0:
-      TrocaCor(2);
-      puts("||==========");
-      puts("||      |   ");
-      puts("||      X   ");
-      puts("||    --|-- ");
-      puts("||      |   ");
-      puts("||     / \\ ");
-      TrocaCor(0);
-      break;
-    case 10:
-      TrocaCor(1);
-      puts("     |  O    ");
-      puts("     ---|--- ");
-      puts("        |   |");
-      puts("        |    ");
-      puts("       / \\  ");
-      TrocaCor(0);
-      break;
-    case 11:
-      TrocaCor(1);
-      puts("        O  | ");
-      puts("     ---|--- ");
-      puts("     |  |    ");
-      puts("        |    ");
-      puts("       / \\  ");
-      TrocaCor(0);
-      break;
-    default:
-      puts("||==========");
-      puts("||      |   ");
-      puts("||          ");
-      puts("||          ");
-      puts("||          ");
-      puts("||          ");
-      break;
-  }
+  printf("||==========\n");
+  printf("||      |       \n");
+  printf("||      %c      \n", (situacao < 5 ? 'o' : ' '));
+  printf("||    %c%c%c%c  \n", (situacao < 4 ? '-' : ' '), (situacao < 4 ? '-' : ' '), (situacao < 4 ? '|' : ' '), (situacao < 4 ? '-' : ' '), (situacao < 4 ? '-' : ' '));
+  printf("||      %c      \n", (situacao < 3 ? '|' : ' '));
+  printf("||     %c %c    \n", (situacao < 2 ? '/' : ' '), (situacao < 2 ? '\\' : ' '));
+  printf("\n");
 }
 
 void TrocaCor(int n) {
