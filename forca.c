@@ -99,7 +99,16 @@ int main() {
     TrocaCor(0);
     printf("VOCE GANHOU, PARABENS!!\n\a");
     TrocaCor(1);
-    DesenhaForca(10);
+		printf("       ___________      \n");
+		printf("      '._==_==_=_.'     \n");
+		printf("      .-\\:      /-.    \n");
+		printf("     | (|:.     |) |    \n");
+		printf("      '-|:.     |-'     \n");
+		printf("        \\::.    /      \n");
+		printf("         '::. .'        \n");
+		printf("           ) (          \n");
+		printf("         _.' '._        \n");
+		printf("        '-------'       \n\n");
     TrocaCor(0);
   } else {
     DesenhaCabecalho();
