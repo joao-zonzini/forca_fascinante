@@ -9,9 +9,8 @@ int main() {
   int n, escolha, posicaoAcerto[26];
   char alfabeto[26];
   char **segredos;
-  char chute;
   char linhas[40] = "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
-  int palavra, tentativas = 5, ganhou = 0;
+  int palavra, tentativas = 0, ganhou = 0;
 
   //enche o array de flags com zeros
   for (int i = 0; i < 26; i++) {
@@ -49,28 +48,9 @@ int main() {
 
     tentativasRestantes(tentativas, linhas, strlen(segredos[palavra]));
 
-    printf("Chute: ");
-    scanf(" %c", &chute);
+    authChute(posicaoAcerto, segredos[palavra], linhas);
 
     tentativas = (escolha == 2) ? 7 : 5;
-
-    maiusculador(&chute);
-
-    //assume que o chute é um erro
-    posicaoAcerto[chute - 65] = 2;
-
-    //verifica se o chute é de fato um erro
-    for (int i = 0; i < strlen(segredos[palavra]); i++) {
-      if (chute == segredos[palavra][i]) {
-        if (i == 0) {
-          linhas[0] = segredos[palavra][0];
-          posicaoAcerto[chute - 65] = 1;
-        } else {
-          linhas[i * 2] = segredos[palavra][i];
-          posicaoAcerto[chute - 65] = 1;
-        }
-      }
-    }
 
     //para cada flag marcando erro, tiro 1 de tentativas
     for (int i = 0; i < 26; i++) {
@@ -79,15 +59,7 @@ int main() {
       }
     }
 
-    //assumo que todos as letras foram descobertas
-    ganhou = 1;
-
-    //verifica se falta alguma letra
-    for (int i = 0; i < strlen(linhas); i++) {
-      if (linhas[i] == '_') {
-        ganhou = 0;
-      }
-    }
+    ganhou = verificarLinhas(linhas);
 
   } while(!ganhou && tentativas > 0);
 
@@ -127,6 +99,41 @@ int main() {
   }
   free(segredos);
   return 0;
+}
+
+int verificarLinhas(char *linhas) {
+    //verifica se falta alguma letra
+  for (int i = 0; i < strlen(linhas); i++) {
+    if (linhas[i] == '_') {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+void authChute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
+  char chute;
+
+  //pega chute:
+  printf("Chute: ");
+  scanf(" %c", &chute);
+  maiusculador(&chute);
+
+  //assume que o chute é um erro
+  posicaoAcerto[chute - 65] = 2;
+
+  //verifica se o chute é de fato um erro
+  for (int i = 0; i < strlen(palavraSecreta); i++) {
+    if (chute == palavraSecreta[i]) {
+      if (i == 0) {
+        linhas[0] = palavraSecreta[0];
+        posicaoAcerto[chute - 65] = 1;
+      } else {
+        linhas[i * 2] = palavraSecreta[i];
+        posicaoAcerto[chute - 65] = 1;
+      }
+    }
+  }
 }
 
 void maiusculador(char *letra) {
