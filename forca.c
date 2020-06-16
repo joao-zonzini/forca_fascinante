@@ -69,24 +69,24 @@ int main() {
     TrocaCor(1);
     printf("%s\n\n", linhas);
     TrocaCor(0);
-    printf("VOCE GANHOU, PARABENS!!\n\a");
-    TrocaCor(1);
-		printf("       ___________      \n");
-		printf("      '._==_==_=_.'     \n");
-		printf("      .-\\:      /-.    \n");
-		printf("     | (|:.     |) |    \n");
-		printf("      '-|:.     |-'     \n");
-		printf("        \\::.    /      \n");
-		printf("         '::. .'        \n");
-		printf("           ) (          \n");
-		printf("         _.' '._        \n");
-		printf("        '-------'       \n\n");
+    printf("   VOCE GANHOU, PARABENS!!\n\a");
+    TrocaCor(3);
+		printf("        ___________      \n");
+		printf("       '._==_==_=_.'     \n");
+		printf("       .-\\:      /-.    \n");
+		printf("      | (|:.     |) |    \n");
+		printf("       '-|:.     |-'     \n");
+		printf("         \\::.    /      \n");
+		printf("          '::. .'        \n");
+		printf("            ) (          \n");
+		printf("          _.' '._        \n");
+		printf("         '-------'       \n\n");
     TrocaCor(0);
   } else {
     DesenhaCabecalho();
     puts("");
     printf("Voce perdeu ;( o segredo era: ");
-    printf("%s\n\n", segredos[palavra]);
+    printf("\t%s\n\n", segredos[palavra]);
     TrocaCor(2);
     DesenhaForca(0);
     TrocaCor(0);
@@ -116,7 +116,7 @@ void authChute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
 
   //pega chute:
   printf("Chute: ");
-  scanf(" %c", &chute);
+  chute = getchar();
   maiusculador(&chute);
 
   //assume que o chute é um erro
@@ -125,6 +125,7 @@ void authChute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
   //verifica se o chute é de fato um erro
   for (int i = 0; i < strlen(palavraSecreta); i++) {
     if (chute == palavraSecreta[i]) {
+      printf("\a");
       if (i == 0) {
         linhas[0] = palavraSecreta[0];
         posicaoAcerto[chute - 65] = 1;
@@ -278,6 +279,9 @@ void TrocaCor(int n) {
       break;
     case 2:
       printf("\033[1;31m"); //vermelho
+      break;
+    case 3:
+      printf("\033[1;33m"); //amarelo
       break;
   }
 }
