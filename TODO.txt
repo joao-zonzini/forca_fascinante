@@ -4,4 +4,3 @@
 DEPOIS
 - adicionar condição de "Deseja continuar jogando?"
 - menu inicial para selecionar jogar, ver placar, sair, etc
-- colocar trofeu para quando o jogador ganha
