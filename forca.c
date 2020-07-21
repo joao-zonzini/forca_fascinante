@@ -12,22 +12,13 @@ int main() {
   char linhas[40] = "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
   int palavra, tentativas = 0, ganhou = 0;
 
-  //enche o array de flags com zeros
-  for (int i = 0; i < 26; i++) {
-    posicaoAcerto[i] = 0;
-  }
+  prepara_alfabeto(posicaoAcerto, alfabeto);
 
-  //preenche o alfabeto usando ASCII
-  for (int i = 65; i < 91; i++) {
-    alfabeto[i - 65] = i;
-  }
-  alfabeto[26] = '\0';
-
-  modoDeJogo(&escolha);
+  modo_de_jogo(&escolha);
 
   //quero saber o numero de segredos, jogo a escolha pra decidir qual arquivo abrir
-  n = voltaN(escolha);
-  segredos = LeSegredos(segredos, escolha); //segredos ta alocado dinamicamente para o numero de palavras
+  n = voltar_n(escolha);
+  segredos = ler_segredos(segredos, escolha); //segredos ta alocado dinamicamente para o numero de palavras
 
   //escolhe um segredo aleatoriamente
   srand(time(NULL));
@@ -39,16 +30,16 @@ int main() {
   tentativas = (escolha == 2) ? 7 : 5;
 
   do {
-    DesenhaCabecalho();
+    desenhar_cabecalho();
     puts("");
-    DesenhaForca(tentativas);
+    desenhar_forca(tentativas);
     puts("");
 
-    pintarAlfabeto(alfabeto, posicaoAcerto);
+    pintar_alfabeto(alfabeto, posicaoAcerto);
 
-    tentativasRestantes(tentativas, linhas, strlen(segredos[palavra]));
+    tentativas_restantes(tentativas, linhas, strlen(segredos[palavra]));
 
-    authChute(posicaoAcerto, segredos[palavra], linhas);
+    auth_chute(posicaoAcerto, segredos[palavra], linhas);
 
     tentativas = (escolha == 2) ? 7 : 5;
 
@@ -59,18 +50,18 @@ int main() {
       }
     }
 
-    ganhou = verificarLinhas(linhas);
+    ganhou = verificar_linhas(linhas);
 
   } while(!ganhou && tentativas > 0);
 
+  desenhar_cabecalho();
+  puts("");
   if (ganhou) {
-    DesenhaCabecalho();
-    puts("");
-    TrocaCor(1);
+    trocar_cor(1);
     printf("%s\n\n", linhas);
-    TrocaCor(0);
+    trocar_cor(0);
     printf("   VOCE GANHOU, PARABENS!!\n\a");
-    TrocaCor(3);
+    trocar_cor(3);
 		printf("        ___________      \n");
 		printf("       '._==_==_=_.'     \n");
 		printf("       .-\\:      /-.    \n");
@@ -81,15 +72,13 @@ int main() {
 		printf("            ) (          \n");
 		printf("          _.' '._        \n");
 		printf("         '-------'       \n\n");
-    TrocaCor(0);
+    trocar_cor(0);
   } else {
-    DesenhaCabecalho();
-    puts("");
     printf("Voce perdeu ;( o segredo era: ");
     printf("\t%s\n\n", segredos[palavra]);
-    TrocaCor(2);
-    DesenhaForca(0);
-    TrocaCor(0);
+    trocar_cor(2);
+    desenhar_forca(0);
+    trocar_cor(0);
     puts("");
   }
 
@@ -101,7 +90,22 @@ int main() {
   return 0;
 }
 
-int verificarLinhas(char *linhas) {
+void prepara_alfabeto(int *posicaoAcerto, char *alfabeto){
+  //enche o array de flags com zeros
+  for (int i = 0; i < 26; i++) {
+    posicaoAcerto[i] = 0;
+  }
+
+  //preenche o alfabeto usando ASCII
+  for (int i = 65; i < 91; i++) {
+    alfabeto[i - 65] = i;
+  }
+
+  posicaoAcerto[26] = '\0';
+  alfabeto[26] = '\0';
+}
+
+int verificar_linhas(char *linhas) {
     //verifica se falta alguma letra
   for (int i = 0; i < strlen(linhas); i++) {
     if (linhas[i] == '_') {
@@ -111,7 +115,7 @@ int verificarLinhas(char *linhas) {
   return 1;
 }
 
-void authChute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
+void auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
   char chute;
 
   //pega chute:
@@ -146,7 +150,7 @@ void maiusculador(char *letra) {
   }
 }
 
-void tentativasRestantes(int tentativas, char *linhas, int numeroDeLetras) {
+void tentativas_restantes(int tentativas, char *linhas, int numeroDeLetras) {
   printf("\n\n");
   puts("\t-----------------------------  ");
   printf("\t|  Tentativas restantes: %d  |\n", tentativas);
@@ -154,7 +158,7 @@ void tentativasRestantes(int tentativas, char *linhas, int numeroDeLetras) {
   printf("\n%s\t\t\t-----> %ld letras\n\n", linhas, numeroDeLetras);
 }
 
-void pintarAlfabeto(char *alfabeto, int *posicaoAcerto) {
+void pintar_alfabeto(char *alfabeto, int *posicaoAcerto) {
   //varre o alfabeto e sua array de flags para verificar os acertos e erros
   for (int i = 0; i <= strlen(alfabeto); i++) {
     switch (posicaoAcerto[i]) {
@@ -162,20 +166,20 @@ void pintarAlfabeto(char *alfabeto, int *posicaoAcerto) {
       printf("%c ", alfabeto[i]);
       break;
       case 1:       //acerto
-      TrocaCor(1);
+      trocar_cor(1);
       printf("%c ", alfabeto[i]);
-      TrocaCor(0);
+      trocar_cor(0);
       break;
       case 2:       //erro
-      TrocaCor(2);
+      trocar_cor(2);
       printf("%c ", alfabeto[i]);
-      TrocaCor(0);
+      trocar_cor(0);
       break;
     }
   }
 }
 
-void modoDeJogo(int *escolha) {
+void modo_de_jogo(int *escolha) {
   //escolha do modo de jogo, condicao evita um modo que nao existe
   do {
     puts("Qual o modo de jogo?");
@@ -184,12 +188,12 @@ void modoDeJogo(int *escolha) {
   } while(*escolha != 1 && *escolha != 2);
 }
 
-char **LeSegredos(char **segredos, int qualArquivo) {
+char **ler_segredos(char **segredos, int qualArquivo) {
   char nomeDoArquivo[10];
   int n;
   FILE *arq;
 
-  n = voltaN(qualArquivo);
+  n = voltar_n(qualArquivo);
 
   if (qualArquivo == 1) {
     strncpy(nomeDoArquivo, "frutas.txt", 10);
@@ -221,7 +225,7 @@ char **LeSegredos(char **segredos, int qualArquivo) {
   return segredos;
 }
 
-int voltaN(int qualArquivo) {
+int voltar_n(int qualArquivo) {
   char nomeDoArquivo[10];
   char c;
   int n = -1;
@@ -252,14 +256,14 @@ int voltaN(int qualArquivo) {
   return n;
 }
 
-void DesenhaCabecalho() {
+void desenhar_cabecalho() {
   system("clear");
   puts("|--------JOGO------------------------|");
   puts("|-----------------DA-----------------|");
   puts("|---------------------------FORCA----|");
 }
 
-void DesenhaForca(int situacao) {
+void desenhar_forca(int situacao) {
   printf("||==========\n");
   printf("||      |       \n");
   printf("||      %c      \n", (situacao < 5 ? 'o' : ' '));
@@ -269,7 +273,7 @@ void DesenhaForca(int situacao) {
   printf("\n");
 }
 
-void TrocaCor(int n) {
+void trocar_cor(int n) {
   switch (n) {
     case 0:
       printf("\033[0m");    //reseta

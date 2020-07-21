@@ -1,9 +1,10 @@
 #define SMAX 20
 
 //prototipo de funcoes
-char **LeSegredos(char **segredos, int qualArquivo); int voltaN(int qualArquivo);
-void DesenhaCabecalho(); void TrocaCor(int n); void DesenhaForca(int situacao);
-void modoDeJogo(int *escolha); void pintarAlfabeto(char *alfabeto, int *posicaoAcerto);
-void tentativasRestantes(int tentativas, char *linhas, int numeroDeLetras);
-void maiusculador(char *letra); void authChute(int *posicaoAcerto, char *palavraSecreta, char *linhas);
-int verificarLinhas(char *linhas);
+char **ler_segredos(char **segredos, int qualArquivo); int voltar_n(int qualArquivo);
+void desenhar_cabecalho(); void trocar_cor(int n); void desenhar_forca(int situacao);
+void modo_de_jogo(int *escolha); void pintar_alfabeto(char *alfabeto, int *posicaoAcerto);
+void tentativas_restantes(int tentativas, char *linhas, int numeroDeLetras);
+void maiusculador(char *letra); void auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas);
+int verificar_linhas(char *linhas);
+void prepara_alfabeto(int *posicaoAcerto, char *alfabeto);
