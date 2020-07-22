@@ -39,7 +39,8 @@ int main() {
 
     tentativas_restantes(tentativas, linhas, strlen(segredos[palavra]));
 
-    auth_chute(posicaoAcerto, segredos[palavra], linhas);
+    if (auth_chute(posicaoAcerto, segredos[palavra], linhas))
+      continue;
 
     tentativas = (escolha == 2) ? 7 : 5;
 
@@ -115,12 +116,22 @@ int verificar_linhas(char *linhas) {
   return 1;
 }
 
-void auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
-  char chute;
+int auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
+  int c;
+  int chute;
 
   //pega chute:
   printf("Chute: ");
-  scanf(" %c", &chute);
+
+  while ((c = getchar()) != '\n' && c != EOF) {
+    //flush stdin
+  }
+
+  chute = getchar();
+
+  if (!((chute >= 65 && chute <= 90) || (chute >= 97 && chute <= 122)))
+    return 1;
+
   maiusculador(&chute);
 
   //assume que o chute é um erro
@@ -139,9 +150,11 @@ void auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
       }
     }
   }
+
+  return 0;
 }
 
-void maiusculador(char *letra) {
+void maiusculador(int *letra) {
   int diff;
   //nao importa o letra esse codigo faz ele ser maiusculo
   if (*letra >= 97 && *letra <= 122) {
