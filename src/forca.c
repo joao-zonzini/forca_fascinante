@@ -131,6 +131,7 @@ int auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
 
   if (!((chute >= 65 && chute <= 90) || (chute >= 97 && chute <= 122)))
     return 1;
+    //nao fere o jogador mas fere o desempenho
 
   maiusculador(&chute);
 
@@ -271,8 +272,16 @@ int voltar_n(int qualArquivo) {
 
 void desenhar_cabecalho() {
   system("clear");
-  puts("|------------------------------------|");
-  puts("|---forca---------------fascinante---|");
+  printf("|------------------------------------|\n");
+  printf("|---");
+  trocar_cor(2);
+  printf("forca");
+  trocar_cor(0);
+  printf("---------------");
+  trocar_cor(3);
+  printf("fascinante");
+  trocar_cor(0);
+  puts("---|");
   puts("|------------------------------------|");
 }
 
