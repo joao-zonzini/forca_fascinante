@@ -120,7 +120,7 @@ void auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
 
   //pega chute:
   printf("Chute: ");
-  chute = getchar();
+  scanf(" %c", &chute);
   maiusculador(&chute);
 
   //assume que o chute é um erro
@@ -258,9 +258,9 @@ int voltar_n(int qualArquivo) {
 
 void desenhar_cabecalho() {
   system("clear");
-  puts("|--------JOGO------------------------|");
-  puts("|-----------------DA-----------------|");
-  puts("|---------------------------FORCA----|");
+  puts("|------------------------------------|");
+  puts("|---forca---------------fascinante---|");
+  puts("|------------------------------------|");
 }
 
 void desenhar_forca(int situacao) {
