@@ -7,91 +7,107 @@
 int main() {
   //declaracao de variaveis
   int n, escolha, posicaoAcerto[26];
+  unsigned short int continuar_jogando = 1;
   char alfabeto[26];
-  char **segredos;
-  char linhas[40] = "_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _";
+  char **segredos, linhas[40];
   int palavra, tentativas = 0, ganhou = 0;
 
-  prepara_alfabeto(posicaoAcerto, alfabeto);
-
-  modo_de_jogo(&escolha);
-
-  //quero saber o numero de segredos, jogo a escolha pra decidir qual arquivo abrir
-  n = voltar_n(escolha);
-  segredos = ler_segredos(segredos, escolha); //segredos ta alocado dinamicamente para o numero de palavras
-
-  //escolhe um segredo aleatoriamente
-  srand(time(NULL));
-  palavra = rand() % n;
-
-  //define o fim da string que faz os _ _ _ _ _
-  linhas[2 * strlen(segredos[palavra])] = '\0';
-
-  tentativas = (escolha == 2) ? 7 : 5;
-
   do {
-    desenhar_cabecalho();
-    puts("");
-    desenhar_forca(tentativas);
-    puts("");
+    prepara_alfabeto(linhas, posicaoAcerto, alfabeto);
 
-    pintar_alfabeto(alfabeto, posicaoAcerto);
+    modo_de_jogo(&escolha);
 
-    tentativas_restantes(tentativas, linhas, strlen(segredos[palavra]));
+    //quero saber o numero de segredos, jogo a escolha pra decidir qual arquivo abrir
+    n = voltar_n(escolha);
+    segredos = ler_segredos(segredos, escolha); //segredos ta alocado dinamicamente para o numero de palavras
 
-    if (auth_chute(posicaoAcerto, segredos[palavra], linhas))
-      continue;
+    //escolhe um segredo aleatoriamente
+    srand(time(NULL));
+    palavra = rand() % n;
+
+    //define o fim da string que faz os _ _ _ _ _
+    linhas[2 * strlen(segredos[palavra])] = '\0';
 
     tentativas = (escolha == 2) ? 7 : 5;
 
-    //para cada flag marcando erro, tiro 1 de tentativas
-    for (int i = 0; i < 26; i++) {
-      if (posicaoAcerto[i] == 2) {
-        tentativas--;
+    do {
+      desenhar_cabecalho();
+      puts("");
+      desenhar_forca(tentativas);
+      puts("");
+
+      pintar_alfabeto(alfabeto, posicaoAcerto);
+
+      tentativas_restantes(tentativas, linhas, strlen(segredos[palavra]));
+
+      if (auth_chute(posicaoAcerto, segredos[palavra], linhas))
+        continue;
+
+      tentativas = (escolha == 2) ? 7 : 5;
+
+      //para cada flag marcando erro, tiro 1 de tentativas
+      for (int i = 0; i < 26; i++) {
+        if (posicaoAcerto[i] == 2) {
+          tentativas--;
+        }
       }
+
+      ganhou = verificar_linhas(linhas);
+
+    } while(!ganhou && tentativas > 0);
+
+    desenhar_cabecalho();
+    puts("");
+    if (ganhou) {
+      trocar_cor(1);
+      printf("%s\n\n", linhas);
+      trocar_cor(0);
+      printf("   VOCE GANHOU, PARABENS!!\n\a");
+      trocar_cor(3);
+  		printf("        ___________      \n");
+  		printf("       '._==_==_=_.'     \n");
+  		printf("       .-\\:      /-.    \n");
+  		printf("      | (|:.     |) |    \n");
+  		printf("       '-|:.     |-'     \n");
+  		printf("         \\::.    /      \n");
+  		printf("          '::. .'        \n");
+  		printf("            ) (          \n");
+  		printf("          _.' '._        \n");
+  		printf("         '-------'       \n\n");
+      trocar_cor(0);
+    } else {
+      printf("Voce perdeu ;( o segredo era: ");
+      printf("\t%s\n\n", segredos[palavra]);
+      trocar_cor(2);
+      desenhar_forca(0);
+      trocar_cor(0);
+      puts("");
     }
 
-    ganhou = verificar_linhas(linhas);
+    //evitando memory leak
+    for (int i = 0; i < n; i++) {
+      free(segredos[i]);
+    }
+    free(segredos);
 
-  } while(!ganhou && tentativas > 0);
+    printf("Quer continuar jogando? (1)SIM (0)NÃO: ");
+    scanf(" %ud", &continuar_jogando);
 
-  desenhar_cabecalho();
-  puts("");
-  if (ganhou) {
-    trocar_cor(1);
-    printf("%s\n\n", linhas);
-    trocar_cor(0);
-    printf("   VOCE GANHOU, PARABENS!!\n\a");
-    trocar_cor(3);
-		printf("        ___________      \n");
-		printf("       '._==_==_=_.'     \n");
-		printf("       .-\\:      /-.    \n");
-		printf("      | (|:.     |) |    \n");
-		printf("       '-|:.     |-'     \n");
-		printf("         \\::.    /      \n");
-		printf("          '::. .'        \n");
-		printf("            ) (          \n");
-		printf("          _.' '._        \n");
-		printf("         '-------'       \n\n");
-    trocar_cor(0);
-  } else {
-    printf("Voce perdeu ;( o segredo era: ");
-    printf("\t%s\n\n", segredos[palavra]);
-    trocar_cor(2);
-    desenhar_forca(0);
-    trocar_cor(0);
-    puts("");
-  }
+  } while(continuar_jogando == 1);
 
-  //evitando memory leak
-  for (int i = 0; i < n; i++) {
-    free(segredos[i]);
-  }
-  free(segredos);
   return 0;
 }
 
-void prepara_alfabeto(int *posicaoAcerto, char *alfabeto){
+void prepara_alfabeto(char *linhas, int *posicaoAcerto, char *alfabeto){
+  for (int i = 0; i < 40; i++) {
+    if (i % 2 == 0) {
+      linhas[i] = '_';
+    } else {
+      linhas[i] = ' ';
+    }
+  }
+
+  linhas[40] = '\0';
   //enche o array de flags com zeros
   for (int i = 0; i < 26; i++) {
     posicaoAcerto[i] = 0;
@@ -120,13 +136,12 @@ int auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
   int c;
   int chute;
 
-  //pega chute:
-  printf("Chute: ");
-
   while ((c = getchar()) != '\n' && c != EOF) {
     //flush stdin
   }
 
+  //pega chute:
+  printf("Chute: ");
   chute = getchar();
 
   if (!((chute >= 65 && chute <= 90) || (chute >= 97 && chute <= 122)))
