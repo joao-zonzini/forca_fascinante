@@ -90,8 +90,10 @@ int main() {
     }
     free(segredos);
 
-    printf("Quer continuar jogando? (1)SIM (0)NÃO: ");
-    scanf(" %ud", &continuar_jogando);
+    do {
+      printf("Quer continuar jogando? (1)SIM (0)NÃO: ");
+      scanf(" %ud", &continuar_jogando);
+    } while(!(continuar_jogando >= 0 && continuar_jogando < 2));
 
   } while(continuar_jogando == 1);
 
@@ -213,7 +215,7 @@ void modo_de_jogo(int *escolha) {
   do {
     puts("Qual o modo de jogo?");
     printf("(1)FRUTAS ou (2)CARROS: ");
-    scanf("%d", escolha);
+    scanf(" %d", escolha);
   } while(*escolha != 1 && *escolha != 2);
 }
 
