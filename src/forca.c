@@ -16,6 +16,7 @@ int main() {
     prepara_alfabeto(linhas, posicaoAcerto, alfabeto);
 
     modo_de_jogo(&escolha);
+    flush_stdin();
 
     //quero saber o numero de segredos, jogo a escolha pra decidir qual arquivo abrir
     n = voltar_n(escolha);
@@ -93,6 +94,7 @@ int main() {
     do {
       printf("Quer continuar jogando? (1)SIM (0)NÃO: ");
       scanf(" %ud", &continuar_jogando);
+      flush_stdin();
     } while(!(continuar_jogando >= 0 && continuar_jogando < 2));
 
   } while(continuar_jogando == 1);
@@ -138,15 +140,13 @@ int auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
   int c;
   int chute;
 
-  while ((c = getchar()) != '\n' && c != EOF) {
-    //flush stdin
-  }
-
   //pega chute:
   printf("Chute: ");
   chute = getchar();
 
-  if (!((chute >= 65 && chute <= 90) || (chute >= 97 && chute <= 122)))
+  flush_stdin();
+
+  if (!((chute >= 65 && chute <= 90) || (chute >= 97 && chute <= 122) || (chute != 13)))
     return 1;
     //nao fere o jogador mas fere o desempenho
 
@@ -158,7 +158,6 @@ int auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
   //verifica se o chute é de fato um erro
   for (int i = 0; i < strlen(palavraSecreta); i++) {
     if (chute == palavraSecreta[i]) {
-      printf("\a");
       if (i == 0) {
         linhas[0] = palavraSecreta[0];
         posicaoAcerto[chute - 65] = 1;
@@ -327,4 +326,9 @@ void trocar_cor(int n) {
       printf("\033[1;33m"); //amarelo
       break;
   }
+}
+
+void flush_stdin() {
+  unsigned short int c;
+  while ((c = getchar()) != '\n' && c != EOF) {}
 }

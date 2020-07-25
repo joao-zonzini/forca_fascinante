@@ -8,3 +8,4 @@ void modo_de_jogo(int *escolha); void pintar_alfabeto(char *alfabeto, int *posic
 void tentativas_restantes(int tentativas, char *linhas, int numeroDeLetras);
 void maiusculador(int *letra); int auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas);
 int verificar_linhas(char *linhas);
+void flush_stdin();
