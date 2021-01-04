@@ -210,7 +210,7 @@ void desenhar_forca(int situacao) {
   printf("||==========\n");
   printf("||      |       \n");
   printf("||      %c      \n", (situacao < 5 ? 'o' : ' '));
-  printf("||    %c%c%c%c  \n", (situacao < 4 ? '-' : ' '), (situacao < 4 ? '-' : ' '), (situacao < 4 ? '|' : ' '), (situacao < 4 ? '-' : ' '), (situacao < 4 ? '-' : ' '));
+  printf("||    %c%c%c%c%c  \n", (situacao < 4 ? '-' : ' '), (situacao < 4 ? '-' : ' '), (situacao < 4 ? '|' : ' '), (situacao < 4 ? '-' : ' '), (situacao < 4 ? '-' : ' '));
   printf("||      %c      \n", (situacao < 3 ? '|' : ' '));
   printf("||     %c %c    \n", (situacao < 2 ? '/' : ' '), (situacao < 2 ? '\\' : ' '));
   printf("\n");
