@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
+#include <termios.h>
 #ifndef FORCA_H
 #define FORCA_H
   #include "forca.h"
@@ -14,6 +16,17 @@ int main() {
   char alfabeto[26];
   char **segredos, linhas[40];
   int palavra, tentativas = 0, ganhou = 0;
+
+  // trocando as configs do terminal para o getc sem enter
+  struct termios antiga_config, nova_config;
+
+  // fazendo backup das configs
+  tcgetattr(STDIN_FILENO, &antiga_config);
+  nova_config = antiga_config;
+
+  // alterando a config e aplicando a nova
+  nova_config.c_lflag &= (~ICANON);
+  tcsetattr(STDIN_FILENO, TCSANOW, &nova_config);
 
   do {
     prepara_alfabeto(linhas, posicaoAcerto, alfabeto);
@@ -101,6 +114,9 @@ int main() {
     } while(!(continuar_jogando >= 0 && continuar_jogando < 2));
 
   } while(continuar_jogando == 1);
+
+  // retornando as configs do terminal
+  tcsetattr(STDIN_FILENO, TCSANOW, &antiga_config);
 
   return 0;
 }
