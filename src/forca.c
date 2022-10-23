@@ -47,9 +47,7 @@ int auth_chute(int *posicaoAcerto, char *palavraSecreta, char *linhas) {
 
   //pega chute:
   printf("Chute: ");
-  chute = getchar();
-
-  flush_stdin();
+  chute = getc(stdin);
 
   if (!((chute >= 65 && chute <= 90) || (chute >= 97 && chute <= 122) || (chute != 13)))
     return 1;
