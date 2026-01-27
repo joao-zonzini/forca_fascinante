@@ -38,18 +38,20 @@ int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute); void free_nod
 
 int main(void){
     
+    // declaracao de variaveis
     int vidas, continuar_jogando = 1;
     char s_segredo[] = "MELANCIA";
     char chute;
     
     do {
 
+        // declaracao das estruturas alfabeto e segredo
         Alfabeto *alfabeto = criar_alfabeto();
         Alfabeto *segredo = criar_segredo(s_segredo);
 
+        // reseta o numero de vidas
         vidas = N_VIDAS;
     
-        
         do {
             system("clear");
     
@@ -71,32 +73,36 @@ int main(void){
             // chute certo --> vida nao se altera
             vidas += auth_chute(alfabeto, segredo, chute);
         } while (!acertou_segredo(segredo) && vidas > 0);
+        // enquanto o jogador nao acertou o segredo e há vidas
+        // --> o jogo continua
+        // daqui para frente ou o segredo foi descoberto ou as tentativas acabaram
         
         system("clear");
-    
+        
         printf("FIM DE JOGO! -----> ");
     
+        // mostra segredo no estado que saiu do loop anterior
         printar_segredo(segredo);
     
+        // parabeniza ou nao o jogador
         if (acertou_segredo(segredo)) {
             printf("Parabéns, você descobriu o segredo!\n");
         } else {
             printf("Poxa, não foi dessa vez.\n");
         }
 
-        // livrando a memoria alocada manualmente
+        // evitando memory leak
         free_nodes(alfabeto);
         free_nodes(segredo);
 
+        // continuar jogando? tem que ser 0 ou 1 --> do-while verifica isso
         do {
             printf("Quer continuar jogando? (1)SIM (0)NÃO: ");
             scanf(" %d", &continuar_jogando);
         } while (!(continuar_jogando >= 0 && continuar_jogando < 2));
 
     } while (continuar_jogando);
-
-
-
+    // se continuar jogando --> comeca tudo de novo
 
 	return 0;
 }
