@@ -36,11 +36,36 @@ Alfabeto *criar_segredo(char s_segredo[]); char maiusculador(char letra); void a
 int acertou_segredo(Alfabeto *head); void printar_segredo(Alfabeto *head);
 int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute); void free_nodes(Alfabeto *head);
 
+char *escolher_segredo(char *segredo) {
+    // declaracao da string segredo que será retornada
+    segredo = calloc(10, sizeof(char));
+
+    // ponteiro para arquivo de segredos
+    FILE *arq;
+
+    // abre arquivo de segredos
+    arq = fopen("segredos.txt", "r");
+
+    // se arq for null algo na abertura do arquivo deu errado
+    if (arq == NULL) {
+        puts("ERRO NA LEITURA DOS SEGREDOS");
+        exit(1);
+    }    
+
+    fscanf(arq, "\n%s", segredo);
+
+    // tudo que é aberto tem que ser fechado
+    fclose(arq);
+
+    return segredo;
+}
+
 int main(void){
     
     // declaracao de variaveis
     int vidas, continuar_jogando = 1;
-    char s_segredo[] = "MELANCIA";
+    char *s_segredo; 
+    s_segredo = escolher_segredo(s_segredo);
     char chute;
     
     do {
