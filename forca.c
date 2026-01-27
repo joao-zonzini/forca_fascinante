@@ -37,51 +37,66 @@ int acertou_segredo(Alfabeto *head); void printar_segredo(Alfabeto *head);
 int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute); void free_nodes(Alfabeto *head);
 
 int main(void){
-    Alfabeto *alfabeto = criar_alfabeto();
-
+    
+    int vidas, continuar_jogando = 1;
     char s_segredo[] = "MELANCIA";
-    Alfabeto *segredo = criar_segredo(s_segredo);
-
     char chute;
-    int vidas = N_VIDAS;
-
+    
     do {
+
+        Alfabeto *alfabeto = criar_alfabeto();
+        Alfabeto *segredo = criar_segredo(s_segredo);
+
+        vidas = N_VIDAS;
+    
+        
+        do {
+            system("clear");
+    
+            // printa segredo em forma de _ _ _ _ e alfabeto com os chutes disponivieis
+            printar_segredo(segredo);
+            printar_alfabeto(alfabeto);
+            printf("\n");
+            printf("Numero de chutes: %d\n", vidas);
+    
+            // aceita chute
+            printf("Chute uma letra: ");
+            scanf(" %c", &chute);
+    
+            // mesmo que input seja minusculo, funcao transforma em maiuscula
+            chute = maiusculador(chute);
+    
+            // funcao verifica o chute, altera o alfabato e o segredo e retorna a alteracao da vida
+            // chute errado --> vida diminui
+            // chute certo --> vida nao se altera
+            vidas += auth_chute(alfabeto, segredo, chute);
+        } while (!acertou_segredo(segredo) && vidas > 0);
+        
         system("clear");
-
-        // printa segredo em forma de _ _ _ _ e alfabeto com os chutes disponivieis
+    
+        printf("FIM DE JOGO! -----> ");
+    
         printar_segredo(segredo);
-        printar_alfabeto(alfabeto);
-        printf("\n");
-        printf("Numero de chutes: %d\n", vidas);
+    
+        if (acertou_segredo(segredo)) {
+            printf("Parabéns, você descobriu o segredo!\n");
+        } else {
+            printf("Poxa, não foi dessa vez.\n");
+        }
 
-        // aceita chute
-        printf("Chute uma letra: ");
-        scanf(" %c", &chute);
+        // livrando a memoria alocada manualmente
+        free_nodes(alfabeto);
+        free_nodes(segredo);
 
-        // mesmo que input seja minusculo, funcao transforma em maiuscula
-        chute = maiusculador(chute);
+        do {
+            printf("Quer continuar jogando? (1)SIM (0)NÃO: ");
+            scanf(" %d", &continuar_jogando);
+        } while (!(continuar_jogando >= 0 && continuar_jogando < 2));
 
-        // funcao verifica o chute, altera o alfabato e o segredo e retorna a alteracao da vida
-        // chute errado --> vida diminui
-        // chute certo --> vida nao se altera
-        vidas += auth_chute(alfabeto, segredo, chute);
-    } while (!acertou_segredo(segredo) && vidas > 0);
+    } while (continuar_jogando);
 
-    system("clear");
 
-    printf("FIM DE JOGO! -----> ");
 
-    printar_segredo(segredo);
-
-    if (acertou_segredo(segredo)) {
-        printf("Parabéns, você descobriu o segredo!\n");
-    } else {
-        printf("Poxa, não foi dessa vez.\n");
-    }
-
-    // livrando a memoria alocada manualmente
-    free_nodes(alfabeto);
-    free_nodes(segredo);
 
 	return 0;
 }
