@@ -38,6 +38,17 @@ int acertou_segredo(Alfabeto *head); void printar_segredo(Alfabeto *head);
 int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute); void free_nodes(Alfabeto *head);
 char *escolher_segredo(char *segredo_escolhido);
 
+void desenhar_cabecalho(int tentativas, char *segredo) {
+    int n_letras = 0;
+
+    n_letras = strlen(segredo);
+
+    printf("--> %d letras\n\n", n_letras);
+    puts("\t-----------------------------");
+    printf("\t|  Tentativas restantes: %d  |\n", tentativas);
+    puts("\t-----------------------------\n");
+}
+
 int main(void){
     
     // declaracao de variaveis
@@ -58,12 +69,15 @@ int main(void){
     
         do {
             system("clear");
-    
+            
+            puts("----> forca_fascinante <----\n\n");
             // printa segredo em forma de _ _ _ _ e alfabeto com os chutes disponivieis
+            printf("\t");
             printar_segredo(segredo);
+            puts("");
             printar_alfabeto(alfabeto);
-            printf("\n");
-            printf("Numero de chutes: %d\n", vidas);
+            puts("");
+            desenhar_cabecalho(vidas, s_segredo);
     
             // aceita chute
             printf("Chute uma letra: ");
