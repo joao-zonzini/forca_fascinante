@@ -36,73 +36,7 @@ void printar_alfabeto(Alfabeto *head); Alfabeto *encontrar_letra(Alfabeto *head,
 Alfabeto *criar_segredo(char s_segredo[]); char maiusculador(char letra); void auth_segredo(Alfabeto *head, char chute);
 int acertou_segredo(Alfabeto *head); void printar_segredo(Alfabeto *head);
 int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute); void free_nodes(Alfabeto *head);
-
-char *escolher_segredo(char *segredo_escolhido) {
-
-    // declaracao da string segredo_escolhido que será retornada
-    segredo_escolhido = calloc(10, sizeof(char));
-
-    // declaracao de variaveis
-	char **segredos;
-	int n = -1;
-	int pos_segredo;
-
-	// alocando o primeiro ptr para um segredo_escolhido no array
-	segredos = (char **) calloc(10, sizeof(char *));
-
-	// ponteiro para arquivo de segredos
-    FILE *arq;
-
-    // abre arquivo de segredos
-    arq = fopen("segredos.txt", "r");
-
-    // se arq for null algo na abertura do arquivo deu errado
-    if (arq == NULL) {
-        puts("ERRO NA LEITURA DOS SEGREDOS");
-        exit(1);
-    }    
-
-	//determinar numero de segredos
-	char c;
-	while (!feof(arq)) {
-    	fscanf(arq, "%c", &c);
-    	if (c == '\n') {
-      		n++;
-    	}
-  	}
-	printf("n --> %d\n", n);
-
-	//	reseta o ponteiro do arquivo para a posicao inicial
-	rewind(arq);
-
-	// alocar dinamicamente a quantidade de segredos
-	segredos = (char **) calloc(n, sizeof(char *));
-	for (int i = 0; i < n; i++) {
-		segredos[i] = (char *) calloc(10, sizeof(char *));
-	}
-
-	// ler no vetor segredos os segredos do arq
-	fscanf(arq, "%s", segredos[0]);
-	for (int i = 1; i < n; i++) {
-		fscanf(arq, "\n%s", segredos[i]);
-	}
-
-	// gerar posicao aleatoria na array segredos e copiar em segredo_escolhido
-	srand(time(NULL));
-	pos_segredo = rand() % n;
-	strncpy(segredo_escolhido, segredos[pos_segredo], 9);
-
-	// evitando memory leak
-	for (int i = 0; i < n; i++) {
-		free(segredos[i]);
-	}
-	free(segredos);
-
-    // tudo que é aberto tem que ser fechado
-    fclose(arq);
-    
-    return segredo_escolhido;
-}
+char *escolher_segredo(char *segredo_escolhido);
 
 int main(void){
     
@@ -367,4 +301,70 @@ void free_nodes(Alfabeto *head) {
     }
 
     free(iter);
+}
+
+char *escolher_segredo(char *segredo_escolhido) {
+
+    // declaracao da string segredo_escolhido que será retornada
+    segredo_escolhido = calloc(10, sizeof(char));
+
+    // declaracao de variaveis
+	char **segredos;
+	int n = -1;
+	int pos_segredo;
+
+	// alocando o primeiro ptr para um segredo_escolhido no array
+	segredos = (char **) calloc(10, sizeof(char *));
+
+	// ponteiro para arquivo de segredos
+    FILE *arq;
+
+    // abre arquivo de segredos
+    arq = fopen("segredos.txt", "r");
+
+    // se arq for null algo na abertura do arquivo deu errado
+    if (arq == NULL) {
+        puts("ERRO NA LEITURA DOS SEGREDOS");
+        exit(1);
+    }    
+
+	//determinar numero de segredos
+	char c;
+	while (!feof(arq)) {
+    	fscanf(arq, "%c", &c);
+    	if (c == '\n') {
+      		n++;
+    	}
+  	}
+
+	//	reseta o ponteiro do arquivo para a posicao inicial
+	rewind(arq);
+
+	// alocar dinamicamente a quantidade de segredos
+	segredos = (char **) calloc(n, sizeof(char *));
+	for (int i = 0; i < n; i++) {
+		segredos[i] = (char *) calloc(10, sizeof(char *));
+	}
+
+	// ler no vetor segredos os segredos do arq
+	fscanf(arq, "%s", segredos[0]);
+	for (int i = 1; i < n; i++) {
+		fscanf(arq, "\n%s", segredos[i]);
+	}
+
+	// gerar posicao aleatoria na array segredos e copiar em segredo_escolhido
+	srand(time(NULL));
+	pos_segredo = rand() % n;
+	strncpy(segredo_escolhido, segredos[pos_segredo], 9);
+
+	// evitando memory leak
+	for (int i = 0; i < n; i++) {
+		free(segredos[i]);
+	}
+	free(segredos);
+
+    // tudo que é aberto tem que ser fechado
+    fclose(arq);
+    
+    return segredo_escolhido;
 }
