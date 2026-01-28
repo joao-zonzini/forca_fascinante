@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+#include <time.h>
 
 // definicao de constantes de manipulacao de cores no terminal
 // exemplo de uso - printf(CVERM);
@@ -36,11 +37,20 @@ Alfabeto *criar_segredo(char s_segredo[]); char maiusculador(char letra); void a
 int acertou_segredo(Alfabeto *head); void printar_segredo(Alfabeto *head);
 int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute); void free_nodes(Alfabeto *head);
 
-char *escolher_segredo(char *segredo) {
-    // declaracao da string segredo que será retornada
-    segredo = calloc(10, sizeof(char));
+char *escolher_segredo(char *segredo_escolhido) {
 
-    // ponteiro para arquivo de segredos
+    // declaracao da string segredo_escolhido que será retornada
+    segredo_escolhido = calloc(10, sizeof(char));
+
+    // declaracao de variaveis
+	char **segredos;
+	int n = -1;
+	int pos_segredo;
+
+	// alocando o primeiro ptr para um segredo_escolhido no array
+	segredos = (char **) calloc(10, sizeof(char *));
+
+	// ponteiro para arquivo de segredos
     FILE *arq;
 
     // abre arquivo de segredos
@@ -52,12 +62,46 @@ char *escolher_segredo(char *segredo) {
         exit(1);
     }    
 
-    fscanf(arq, "\n%s", segredo);
+	//determinar numero de segredos
+	char c;
+	while (!feof(arq)) {
+    	fscanf(arq, "%c", &c);
+    	if (c == '\n') {
+      		n++;
+    	}
+  	}
+	printf("n --> %d\n", n);
+
+	//	reseta o ponteiro do arquivo para a posicao inicial
+	rewind(arq);
+
+	// alocar dinamicamente a quantidade de segredos
+	segredos = (char **) calloc(n, sizeof(char *));
+	for (int i = 0; i < n; i++) {
+		segredos[i] = (char *) calloc(10, sizeof(char *));
+	}
+
+	// ler no vetor segredos os segredos do arq
+	fscanf(arq, "%s", segredos[0]);
+	for (int i = 1; i < n; i++) {
+		fscanf(arq, "\n%s", segredos[i]);
+	}
+
+	// gerar posicao aleatoria na array segredos e copiar em segredo_escolhido
+	srand(time(NULL));
+	pos_segredo = rand() % n;
+	strncpy(segredo_escolhido, segredos[pos_segredo], 9);
+
+	// evitando memory leak
+	for (int i = 0; i < n; i++) {
+		free(segredos[i]);
+	}
+	free(segredos);
 
     // tudo que é aberto tem que ser fechado
     fclose(arq);
-
-    return segredo;
+    
+    return segredo_escolhido;
 }
 
 int main(void){
@@ -65,17 +109,18 @@ int main(void){
     // declaracao de variaveis
     int vidas, continuar_jogando = 1;
     char *s_segredo; 
-    s_segredo = escolher_segredo(s_segredo);
     char chute;
     
     do {
-
+        // escolher o segredo
+        s_segredo = escolher_segredo(s_segredo);
+        
         // declaracao das estruturas alfabeto e segredo
         Alfabeto *alfabeto = criar_alfabeto();
         Alfabeto *segredo = criar_segredo(s_segredo);
-
+        
         // reseta o numero de vidas
-        vidas = N_VIDAS;
+        vidas = N_VIDAS;    
     
         do {
             system("clear");
@@ -128,6 +173,8 @@ int main(void){
 
     } while (continuar_jogando);
     // se continuar jogando --> comeca tudo de novo
+
+    free(s_segredo);
 
 	return 0;
 }
