@@ -33,7 +33,7 @@ typedef struct alfab {
 // declaracao de prototipos de funcoes
 Alfabeto *criar_letra(char letra); Alfabeto *criar_alfabeto(); void append_letra(Alfabeto *head, Alfabeto *nova_letra);
 void printar_alfabeto(Alfabeto *head); Alfabeto *encontrar_letra(Alfabeto *head, char letra); Alfabeto *criar_alfabeto();
-Alfabeto *criar_segredo(char s_segredo[]); char maiusculador(char letra); void auth_segredo(Alfabeto *head, char chute);
+Alfabeto *criar_segredo(char s_segredo[]); void auth_segredo(Alfabeto *head, char chute);
 int acertou_segredo(Alfabeto *head); void printar_segredo(Alfabeto *head);
 int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute); void free_nodes(Alfabeto *head);
 char *escolher_segredo(char *segredo_escolhido); void desenhar_cabecalho(int tentativas, char *segredo);
@@ -74,7 +74,12 @@ int main(void){
             scanf(" %c", &chute);
     
             // mesmo que input seja minusculo, funcao transforma em maiuscula
-            chute = maiusculador(chute);
+            // tambem garante que o input é uma letra valida
+            if (chute >= 97 && chute <= 122) {
+                chute = (chute - 97) + 65;
+            } else if (chute < 65 || chute > 90) {
+                continue;
+            }
     
             // funcao verifica o chute, altera o alfabato e o segredo e retorna a alteracao da vida
             // chute errado --> vida diminui
@@ -233,14 +238,6 @@ Alfabeto *criar_segredo(char s_segredo[]) {
     return segredo;
 }
 
-char maiusculador(char letra) {
-    if (letra >= 97 && letra <= 122) {
-        return (letra - 97) + 65;
-    } else {
-        return letra;
-    }
-}
-
 void auth_segredo(Alfabeto *head, char chute) {
     Alfabeto *iter = head;
 
@@ -285,11 +282,13 @@ int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute) {
     if (encontrar_letra(segredo, chute) != NULL) {
         encontrar_letra(alfabeto, chute)->chutado = CHUTE_CERTO;
         auth_segredo(segredo, chute);
-        return 0;
     } else {
-        encontrar_letra(alfabeto, chute)->chutado = CHUTE_ERRADO;
-        return -1;
+        if (encontrar_letra(alfabeto, chute)->chutado == CHUTE_RESET) {
+            encontrar_letra(alfabeto, chute)->chutado = CHUTE_ERRADO;
+            return -1;
+        }
     }
+    return 0;
 }
 
 // lidando com a memoria alocada manualmente
