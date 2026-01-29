@@ -1,36 +1,40 @@
-// forca.c
-// Jogo da forca implementado com linked lists
-// jaz 30/12/25
+/* 
+--------------------------------------------------------------------------|
+| Programa: forca_fascinante.c  										  |
+| Objetivo: criar um jogo de forca usando listas encadeadas               |
+| Autor: João Pedro de Azevedo Zonzini @ 30/12/25						  |
+--------------------------------------------------------------------------|
+*/ 
 
-// importacao de bibliotecas
+// importação de bibliotecas
 #include <stdlib.h>
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
 #include <time.h>
 
-// definicao de constantes de manipulacao de cores no terminal
+// definição de constantes de manipulação de cores no terminal
 // exemplo de uso - printf(CVERM);
 #define CRESET "\x1B[0m"    // reset
 #define CVERM  "\x1B[31m"   // tudo a seguir escrito em vermelho
 #define CVERD  "\x1B[32m"   // tudo a seguir escitro em verde
 
-// definicao de constantes para estado do chute nas structs Alfabeto
+// definição de constantes para estado do chute nas structs Alfabeto
 #define CHUTE_RESET 0
 #define CHUTE_CERTO 1
 #define CHUTE_ERRADO 2
 
-// definicao de constante de numero de erros maximos no jogo
-#define N_VIDAS 5
+// definição de constante de número de erros máximos no jogo
+#define N_TENTATIVAS 5
 
-// definicao da estrutura base de linked list
+// definição da estrutura base de lista encadeada
 typedef struct alfab {
     char letra;                 // letra salva no node
-    int chutado;                // info se letra foi chutada ou nao, ver constantes acima
-    struct alfab *prox;         // pointeiro para o proximo node
+    int chutado;                // info se letra foi chutada ou não, ver constantes acima
+    struct alfab *prox;         // pointeiro para o próximo node
 } Alfabeto;
 
-// declaracao de prototipos de funcoes
+// declaração de protótipos de funções
 Alfabeto *criar_letra(char letra); Alfabeto *criar_alfabeto(); void append_letra(Alfabeto *head, Alfabeto *nova_letra);
 void printar_alfabeto(Alfabeto *head); Alfabeto *encontrar_letra(Alfabeto *head, char letra); Alfabeto *criar_alfabeto();
 Alfabeto *criar_segredo(char s_segredo[]); void auth_segredo(Alfabeto *head, char chute);
@@ -41,8 +45,8 @@ char *escolher_segredo(char *segredo_escolhido); void desenhar_cabecalho(int ten
 
 int main(void){
     
-    // declaracao de variaveis
-    int vidas, continuar_jogando = 1;
+    // declaração de variaveis
+    int tentativas, continuar_jogando = 1;
     char *s_segredo; 
     char chute;
     
@@ -50,43 +54,43 @@ int main(void){
         // escolher o segredo
         s_segredo = escolher_segredo(s_segredo);
         
-        // declaracao das estruturas alfabeto e segredo
+        // declaração das estruturas alfabeto e segredo
         Alfabeto *alfabeto = criar_alfabeto();
         Alfabeto *segredo = criar_segredo(s_segredo);
         
-        // reseta o numero de vidas
-        vidas = N_VIDAS;    
+        // reseta o número de tentativas
+        tentativas = N_TENTATIVAS;    
     
         do {
             system("clear");
             
             puts("----> forca_fascinante <----\n\n");
-            // printa segredo em forma de _ _ _ _ e alfabeto com os chutes disponivieis
+            // printa segredo em forma de _ _ _ _ e alfabeto com os chutes disponíveis
             printf("\t");
             printar_segredo(segredo);
             puts("");
             printar_alfabeto(alfabeto);
             puts("");
-            desenhar_cabecalho(vidas, s_segredo);
+            desenhar_cabecalho(tentativas, s_segredo);
     
             // aceita chute
             printf("Chute uma letra: ");
             scanf(" %c", &chute);
     
-            // mesmo que input seja minusculo, funcao transforma em maiuscula
-            // tambem garante que o input é uma letra valida
+            // mesmo que input seja minúsculo, transforma em maiúsculo
+            // também garante que o input é uma letra válida
             if (chute >= 97 && chute <= 122) {
                 chute = (chute - 97) + 65;
             } else if (chute < 65 || chute > 90) {
                 continue;
             }
     
-            // funcao verifica o chute, altera o alfabato e o segredo e retorna a alteracao da vida
+            // função verifica o chute, altera o alfabeto e o segredo e retorna a alteração da vida
             // chute errado --> vida diminui
-            // chute certo --> vida nao se altera
-            vidas += auth_chute(alfabeto, segredo, chute);
-        } while (!acertou_segredo(segredo) && vidas > 0);
-        // enquanto o jogador nao acertou o segredo e há vidas
+            // chute certo --> vida não se altera
+            tentativas += auth_chute(alfabeto, segredo, chute);
+        } while (!acertou_segredo(segredo) && tentativas > 0);
+        // enquanto o jogador não acertou o segredo e há tentativas
         // --> o jogo continua
         // daqui para frente ou o segredo foi descoberto ou as tentativas acabaram
         
@@ -97,7 +101,7 @@ int main(void){
         // mostra segredo no estado que saiu do loop anterior
         printar_segredo(segredo);
     
-        // parabeniza ou nao o jogador
+        // parabeniza ou não o jogador
         if (acertou_segredo(segredo)) {
             printf("Parabéns, você descobriu o segredo!\n");
         } else {
@@ -122,19 +126,19 @@ int main(void){
 	return 0;
 }
 
-// funcao cria node com a letra para se inserir no alfabeto ou no segredo
-// recebe p char letra e retorna o node Alfabeto *
+// função cria node com a letra para se inserir no alfabeto ou no segredo
+// recebe char letra e retorna o node Alfabeto
 Alfabeto *criar_letra(char letra){
-    // alocando memoria para o node
+    // alocando memória para o node
     Alfabeto *nova_letra = (Alfabeto *) malloc(sizeof(Alfabeto));
-    // malloc usado --> memoria alocada manualmente --> perigo de memory leak
+    // malloc usado --> memória alocada manualmente --> perigo de memory leak
 
-    // limpa area da memoria para evitar garbage
+    // limpa área da memória para evitar garbage
     memset(nova_letra, 0, sizeof(*nova_letra));
 
     // insere letra no node
     nova_letra->letra = letra;
-    // no inicio, todas as letras estao no estado inicial de nao terem sido chutadas
+    // no início, todas as letras estão no estado inicial de não terem sido chutadas
     nova_letra->chutado = CHUTE_RESET;
     // este node novo é o último
     nova_letra->prox = NULL;
@@ -143,11 +147,11 @@ Alfabeto *criar_letra(char letra){
     return nova_letra;
 }
 
-// funcao que adiciona node ao final da linked lista, seja o alfabeto ou o segredo
+// função que adiciona node ao final da lista encadeada, seja o alfabeto ou o segredo
 void append_letra(Alfabeto *head, Alfabeto *nova_letra) {
     Alfabeto *iter = head;
 
-    // enquanto o iter ainda é um item da linked lista
+    // enquanto o iter ainda é um item da lista encadeada
     while (iter != NULL) {
         // se for o último node da lista, append o novo node
         if (iter->prox == NULL) {
@@ -155,18 +159,18 @@ void append_letra(Alfabeto *head, Alfabeto *nova_letra) {
             nova_letra->prox = NULL;
             break;
         }
-        // se nao for o ultimo node, passa para o proximo
+        // se não for o último node, passa para o proximo
         iter = iter->prox;
     }
 }
 
 
-// funcao para printar o alfabeto
+// função para printar o alfabeto
 void printar_alfabeto(Alfabeto *head) {
-    // node iter para nao perder o head
+    // node iter para não perder o head
     Alfabeto *iter = head;
 
-    // enquanto o iter nao é o último node da linked list
+    // enquanto o iter não é o último node da lista encadeada
     while (iter != NULL) {
 
         // verifica a variavel iter->chutado para ver qualquer pintar a tela
@@ -185,39 +189,46 @@ void printar_alfabeto(Alfabeto *head) {
                 printf(CRESET);
                 break;
 
-            default: // significa que nao foi chutado ainda --> branco
+            default: // significa que não foi chutado ainda --> branco
                 printf("%c ", iter->letra);
         }
 
-        // passa o iter para o proximo node
+        // passa o iter para o próximo node
         iter = iter->prox;
     }
 
     puts("");
 }
 
-// funcao para procurar node dentro da linked lista
+// função para procurar node dentro da lista encadeada
 Alfabeto *encontrar_letra(Alfabeto *head, char letra) {
-    // criar node iter para nao perder o head
+    // criar node iter para não perder o head
     Alfabeto *iter = head;
 
-    // varre a linked lista
+    // varre a lista encadeada
     while (iter != NULL) {
-        // se a letra for a procura, retorna este node
+        // se a letra for encontrada, retorna este node
         if (iter->letra == letra) {
             return iter;
         }
         iter = iter->prox;
     }
+    // se a letra não foi encontrada, retorna um ponteiro nulo
     return NULL;
 }
 
+// função para programaticamente popular a struct alfabeto
+// com as letras de A a Z
 Alfabeto *criar_alfabeto() {
+    // criar ponteiro para o primeiro node --> *head
+    // *iter vai ser usado para "varrer" a lista
     Alfabeto *iter, *head;
 
+    // inicializando a lista
     iter = criar_letra(65);
     head = iter;
 
+    // para cada letra do alfabeto inserir na lista
     for (int i = 1; i < 26; i++) {
         append_letra(iter, criar_letra(65 + i));
     }
@@ -225,12 +236,18 @@ Alfabeto *criar_alfabeto() {
     return head;
 }
 
+// função para transformar a string s_segredo em lista encadeada
 Alfabeto *criar_segredo(char s_segredo[]) {
+    // criar ponteiro para o primeiro node --> *segredo
+    // *iter vai ser usado para "varrer" a lista
     Alfabeto *iter, *segredo;
 
+    // inicializando a lista
     segredo = criar_letra(s_segredo[0]);
     iter = segredo;
 
+    // para cada letra da string s_segredo,
+    // inserir uma letra nova no segredo
     for (int i = 1; i <= strlen(s_segredo); i++) {
         append_letra(iter, criar_letra(s_segredo[i]));
     }
@@ -238,39 +255,49 @@ Alfabeto *criar_segredo(char s_segredo[]) {
     return segredo;
 }
 
+// função para verificar se um chute está correto
+// recebe struct *segredo e char chute
 void auth_segredo(Alfabeto *head, char chute) {
+    // *iter vai ser usado para "varrer" a lista e não perder o head
     Alfabeto *iter = head;
 
+    // enquanto a lista não acabar, verificar chute
     while (iter->prox != NULL) {
         if (iter->letra == chute && iter->chutado != CHUTE_CERTO) {
             iter->chutado = CHUTE_CERTO;
         }
+        // ausência de else para forçar a varredura completa da lista
+        // assim duas letras iguais necessariamente são verificadas
         iter = iter->prox;
     }
 }
 
+// função para verificar se todas as letras do segredo foram descobertas
 int acertou_segredo(Alfabeto *head) {
+    // *iter vai ser usado para "varrer" a lista
     Alfabeto *iter = head;
 
     while (iter->prox != NULL) {
-        if (iter->chutado == CHUTE_RESET) { // ainda ha chutes a serem feitos
+        if (iter->chutado == CHUTE_RESET) { // ainda há chutes a serem feitos
             return 0;
         }
         iter = iter->prox;
     }
 
-    // o segredo ja foi descoberto
+    // o segredo já foi descoberto
     return 1;
 }
 
+// função para imprimir na tela o segredo com a letra aparente ou como underline
 void printar_segredo(Alfabeto *head) {
+    // *iter vai ser usado para "varrer" a lista
     Alfabeto *iter = head;
 
     while (iter->prox != NULL) {
-        if (iter->chutado == CHUTE_RESET) {
+        if (iter->chutado == CHUTE_RESET) { // não foi chutado ainda --> _
             printf("_ ");
         } else {
-            printf("%c ", iter->letra);
+            printf("%c ", iter->letra); // já se sabe a letra --> printa ela
         }
         iter = iter->prox;
     }
@@ -278,24 +305,30 @@ void printar_segredo(Alfabeto *head) {
     puts("");
 }
 
+
+// função para verificar se chute está no alfabeto e no segredo
 int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute) {
+    // verificar se a letra está no segredo
+    // fatorar codigo !!!
     if (encontrar_letra(segredo, chute) != NULL) {
-        encontrar_letra(alfabeto, chute)->chutado = CHUTE_CERTO;
+        encontrar_letra(alfabeto, chute)->chutado = CHUTE_CERTO; // 
         auth_segredo(segredo, chute);
-    } else {
+    } else { // chute errado
         if (encontrar_letra(alfabeto, chute)->chutado == CHUTE_RESET) {
-            encontrar_letra(alfabeto, chute)->chutado = CHUTE_ERRADO;
-            return -1;
+            encontrar_letra(alfabeto, chute)->chutado = CHUTE_ERRADO;     // marca chute no alfabeto como errado (pinta de vermelho)
+            return -1;                                                    // tira uma tentativa do jogador e sai da função
         }
     }
-    return 0;
+    return 0;  // não entrou no if do chute errado e saiu --> chute certo --> não tira tentativa do jogador
 }
 
-// lidando com a memoria alocada manualmente
+// função para lidar com a memória alocada manualmente nas structs / lista encadeada
 void free_nodes(Alfabeto *head) {
+    // *iter vai ser usado para "varrer" a lista
     Alfabeto *iter = head;
     Alfabeto *prev;
 
+    // cada node foi alocado manualmente --> cada node deve ser desalocado 
     while (iter->prox != NULL) {
         prev = iter;
         iter = iter->prox;
@@ -306,12 +339,13 @@ void free_nodes(Alfabeto *head) {
     free(iter);
 }
 
+// função para ler o arquivo de segredos e escolher um aleatoriamente
 char *escolher_segredo(char *segredo_escolhido) {
 
-    // declaracao da string segredo_escolhido que será retornada
+    // declaração da string segredo_escolhido que será retornada
     segredo_escolhido = calloc(10, sizeof(char));
 
-    // declaracao de variaveis
+    // declaração de variáveis
 	char **segredos;
 	int n = -1;
 	int pos_segredo;
@@ -331,7 +365,7 @@ char *escolher_segredo(char *segredo_escolhido) {
         exit(1);
     }    
 
-	//determinar numero de segredos
+	// determinar número de segredos
 	char c;
 	while (!feof(arq)) {
     	fscanf(arq, "%c", &c);
@@ -340,7 +374,7 @@ char *escolher_segredo(char *segredo_escolhido) {
     	}
   	}
 
-	//	reseta o ponteiro do arquivo para a posicao inicial
+	// reseta o ponteiro do arquivo para a posição inicial
 	rewind(arq);
 
 	// alocar dinamicamente a quantidade de segredos
@@ -349,13 +383,13 @@ char *escolher_segredo(char *segredo_escolhido) {
 		segredos[i] = (char *) calloc(10, sizeof(char *));
 	}
 
-	// ler no vetor segredos os segredos do arq
+	// ler no vetor segredos os segredos do arquivo
 	fscanf(arq, "%s", segredos[0]);
 	for (int i = 1; i < n; i++) {
 		fscanf(arq, "\n%s", segredos[i]);
 	}
 
-	// gerar posicao aleatoria na array segredos e copiar em segredo_escolhido
+	// gerar posição aleatória na array segredos e copiar em segredo_escolhido
 	srand(time(NULL));
 	pos_segredo = rand() % n;
 	strncpy(segredo_escolhido, segredos[pos_segredo], 9);
@@ -372,6 +406,7 @@ char *escolher_segredo(char *segredo_escolhido) {
     return segredo_escolhido;
 }
 
+// função para desenhar o número de tentativas e o número de letras do segredo
 void desenhar_cabecalho(int tentativas, char *segredo) {
     int n_letras = 0;
 
