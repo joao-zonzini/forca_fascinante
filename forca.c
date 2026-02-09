@@ -42,7 +42,6 @@ int acertou_segredo(Alfabeto *head); void printar_segredo(Alfabeto *head);
 int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute); void free_nodes(Alfabeto *head);
 char *escolher_segredo(char *segredo_escolhido); void desenhar_cabecalho(int tentativas, char *segredo);
 
-
 int main(void){
     
     // declaração de variaveis
@@ -163,7 +162,6 @@ void append_letra(Alfabeto *head, Alfabeto *nova_letra) {
         iter = iter->prox;
     }
 }
-
 
 // função para printar o alfabeto
 void printar_alfabeto(Alfabeto *head) {
@@ -304,7 +302,6 @@ void printar_segredo(Alfabeto *head) {
 
     puts("");
 }
-
 
 // função para verificar se chute está no alfabeto e no segredo
 int auth_chute(Alfabeto *alfabeto, Alfabeto *segredo, char chute) {
