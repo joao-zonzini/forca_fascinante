@@ -46,8 +46,9 @@ int main(void){
     
     // declaração de variaveis
     int tentativas, continuar_jogando = 1;
-    char *s_segredo; 
+    char *s_segredo;
     char chute;
+    char temp;
     
     do {
         // escolher o segredo
@@ -56,6 +57,7 @@ int main(void){
         // declaração das estruturas alfabeto e segredo
         Alfabeto *alfabeto = criar_alfabeto();
         Alfabeto *segredo = criar_segredo(s_segredo);
+        Alfabeto *chute_hist = criar_letra(64);
         
         // reseta o número de tentativas
         tentativas = N_TENTATIVAS;    
@@ -81,6 +83,14 @@ int main(void){
             if (chute >= 97 && chute <= 122) {
                 chute = (chute - 97) + 65;
             } else if (chute < 65 || chute > 90) {
+                continue;
+            }
+            
+            if (encontrar_letra(chute_hist, chute) == NULL) {
+                // chute novo
+                append_letra(chute_hist, criar_letra(chute));
+            } else {
+                // chute já feito antes
                 continue;
             }
     
@@ -110,6 +120,7 @@ int main(void){
         // evitando memory leak
         free_nodes(alfabeto);
         free_nodes(segredo);
+        free_nodes(chute_hist);
 
         // continuar jogando? tem que ser 0 ou 1 --> do-while verifica isso
         do {
